@@ -1,0 +1,63 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+# vagrant plugins required:
+# vagrant-berkshelf, vagrant-omnibus, vagrant-hosts
+Vagrant.configure("2") do |config|
+  config.vm.box = "precise64"
+  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+
+  # enable plugins
+  config.berkshelf.enabled = true
+  config.omnibus.chef_version = :latest
+
+  # if you want to use vagrant-cachier,
+  # please activate below.
+  # config.cache.auto_detect = true
+
+  # please customize hostname and private ip configuration if you needed.
+  config.vm.hostname = "mesos"
+  private_ip = "192.168.33.10"
+  config.vm.network :private_network, ip: private_ip
+  config.vm.provision :hosts do |provisioner|
+    provisioner.add_host private_ip , [ config.vm.hostname ]
+  end
+  # for mesos web UI.
+  config.vm.network :forwarded_port, guest: 5050, host: 5050
+
+  config.vm.provider :virtualbox do |vb|
+    vb.name = 'vagrant-mesos-standalone'
+    # Use VBoxManage to customize the VM. For example to change memory:
+    vb.customize ["modifyvm", :id, "--memory", "2048"]
+  end
+
+  # Enable provisioning with chef solo, specifying a cookbooks path, roles
+  # path, and data_bags path (all relative to this Vagrantfile), and adding
+  # some recipes and/or roles.
+  #
+  config.vm.provision :chef_solo do |chef|
+    # chef.log_level = :debug
+    chef.add_recipe "apt"
+    chef.add_recipe "java"
+    chef.add_recipe "git"
+    chef.add_recipe "maven"
+    # You may also specify custom JSON attributes:
+    chef.json = {
+      :java => {
+        'install_flavor' => "oracle",
+        'jdk_version' => "6",
+        'oracle' => {
+          'accept_oracle_download_terms' => true
+        }
+      },
+      :maven => {
+       'version' => '3',
+       'repository_root' => '/home/vagrant'
+      }
+    }
+  end
+
+  config.vm.provision :shell, :inline => 'sudo apt-get -q -y install build-essential libtool autoconf automake libcurl3 libcurl3-gnutls libcurl4-openssl-dev python python-dev'
+
+  config.vm.provision :shell, :path => 'scripts/mesos-build.sh'
+
+end
