@@ -5,6 +5,7 @@ This contains two vagrant sandbox environment.
 
 * standalone environment
 * cluster environment (not yet.)
+  * mesos ships useful [mesos-ec2 scripts](https://github.com/apache/mesos/blob/master/docs/EC2-Scripts.textile). you can try it. 
 
 
 Prerequisites
