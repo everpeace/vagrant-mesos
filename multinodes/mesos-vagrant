@@ -1,0 +1,145 @@
+#! /bin/bash
+
+function usage(){
+  cat << EOS
+mesos-vagrant: vagrant wrapper helper script for controlling a mesos cluster.
+Usage: mesos-vagrant [-h] command
+
+   -h,  --help                       Print this help.
+
+Available commands:
+    destroy                          Destroy all VMs
+    launch                           Equivalent to up and then start.
+    start                            Start mesos cluster.
+    stop                             Stop mesos cluser.
+    provision                        Equivalent with 'vagrant provision'
+    resume                           Equivalent with 'vagrant resume'
+    status                           print status of VMs and cluster
+    suspend                          Equivalent with 'vagrant suspend'
+    up                               Equivalent with 'vagrant up'
+EOS
+}
+
+VAGRANT=`which vagrant`
+
+function start(){
+  echo 'Starting mesos cluster...'
+  for ZK in `zklist`
+  do
+    $VAGRANT ssh $ZK -c 'mkdir -p /tmp/zookeeper; sudo /home/vagrant/mesos/build/3rdparty/zookeeper-3.3.4/bin/zkServer.sh start'
+  done
+  $VAGRANT ssh master1 -c 'mesos-start-cluster.sh'
+}
+function stop(){
+  echo 'Stopping mesos cluster...'
+  $VAGRANT ssh master1 -c 'mesos-stop-cluster.sh'
+  for ZK in `zklist`
+  do
+    $VAGRANT ssh $ZK -c 'sudo /home/vagrant/mesos/build/3rdparty/zookeeper-3.3.4/bin/zkServer.sh stop'
+  done
+}
+
+function status(){
+  echo '== VM Status =='
+  $VAGRANT status | grep "^master\|^slave\|^zk"
+
+  ZKLIST=`zklist`
+  if [ -n "$ZKLIST" ]; then
+    echo ''
+    echo '== Zookeeper Status =='
+    for ZK in $ZKLIST
+    do
+      echo "-- $ZK --"
+      $VAGRANT ssh $ZK -c 'sudo /home/vagrant/mesos/build/3rdparty/zookeeper-3.3.4/bin/zkServer.sh status'
+    done
+  fi
+
+  echo ''
+  echo "== Master status =="
+  for MASTER in `masterlist`
+  do
+    printf "%-25s %s\n" $MASTER `master_status $MASTER`
+    # echo -n "$MASTER      "
+    # master_status $MASTER
+  done
+
+  echo ''
+  echo "== Slave status =="
+  for SLAVE in `slavelist`
+  do
+    printf "%-25s %s\n" $SLAVE `slave_status $SLAVE`
+    #echo -n "$SLAVE      "
+    #slave_status $SLAVE
+  done
+}
+
+function list(){
+  $VAGRANT status | grep $1 | cut -f 1 -d ' '
+}
+function zklist(){
+  list 'zk'
+}
+function masterlist(){
+  list 'master'
+}
+function slavelist(){
+  list 'slave'
+}
+
+function master_status(){
+  MP=`$VAGRANT ssh $1 -c "ps -ef | grep mesos-master | grep root |tr -s ' '|cut -f2 -d' '"`
+  if [ -n "$MP" ]; then
+    echo "running($MP)"
+  else
+    echo "stopped"
+  fi
+}
+function slave_status(){
+  SP=`$VAGRANT ssh $1 -c "ps -ef | grep mesos-slave | grep root |tr -s ' '|cut -f2 -d' '"`
+  if [ -n "$SP" ]; then
+    echo "running($SP)"
+  else
+    echo "stopped"
+  fi
+}
+
+if [ $# -le 0  ]; then
+  usage
+  exit 0
+fi
+if [ $# -gt 2 ]; then
+  usage
+  exit 0
+fi
+
+case $1 in
+  -h|--help)
+    usage
+    ;;
+  destroy)
+    $VAGRANT $@
+    rm -rf generated
+    ;;
+  provision|resume|suspend|up)
+    $VAGRANT $@
+    ;;
+  launch)
+    $VAGRANT up
+    start
+    ;;
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status
+    ;;
+  *)
+    usage
+    ;;
+esac
+
+exit 0
+

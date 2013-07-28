@@ -1,0 +1,112 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+require './lib/gen_node_infos'
+require './lib/gen_confs'
+
+# Cluster configurations
+master_n = 1     # number of master
+slave_n  = 1     # number of slaves
+force_zk = false # enforce to use zookeeper
+                 # even if master_n is 1.
+
+# VM Settings
+zk_ipbase     = "192.168.30."
+master_ipbase = "192.168.31."
+slave_ipbase  = "192.168.32."
+master_mem    = "512"          # in MB
+slave_mem     = "1024"         # in MB
+zk_mem        = "256"          # in MB
+
+
+node_infos = gen_node_infos( master_n, master_ipbase, master_mem,
+                             slave_n,  slave_ipbase,  slave_mem,
+                                       zk_ipbase,     zk_mem,
+                             force_zk)
+gen_confs(node_infos)
+master_infos = node_infos[:master]
+slave_infos = node_infos[:slave]
+zk_infos = node_infos[:zk]
+
+
+## vagrant plugins required:
+# vagrant-berkshelf, vagrant-omnibus, vagrant-hosts
+Vagrant.configure("2") do |config|
+  config.vm.box = "precise64"
+  config.vm.box_url = "http://files.vagrantup.com/precise64.box"
+
+  # enable plugins
+  config.berkshelf.enabled = true
+  config.omnibus.chef_version = :latest
+
+  # STRONGLY RECOMMENDED
+  # if you want to use vagrant-cachier vagrant plugin,
+  # please activate below.
+  # config.cache.auto_detect = true
+
+  # define VMs. all VMs has identical configuration.
+  ninfolist = [master_infos, slave_infos, zk_infos].flatten
+  ninfolist.each_with_index do |ninfo, i|
+    config.vm.define ninfo[:hostname] do |cfg|
+      cfg.vm.hostname = ninfo[:hostname]
+      cfg.vm.network :private_network, :ip => ninfo[:ip]
+      cfg.vm.provision :hosts
+
+      # for mesos web UI.
+      if ninfo[:hostname].start_with? "master" then
+        hostport = (/master(\d+)/.match ninfo[:hostname])[1].to_i*10000+5050
+        cfg.vm.network :forwarded_port, guest: 5050, host: hostport
+      end
+
+      cfg.vm.provider :virtualbox do |vb|
+        vb.name = 'vagrant-mesos-' + ninfo[:hostname]
+        # Use VBoxManage to customize the VM. For example to change memory:
+        vb.customize ["modifyvm", :id, "--memory", ninfo[:mem] ]
+      end
+
+      cfg.vm.provision :chef_solo do |chef|
+        chef.log_level = :debug
+        chef.add_recipe "apt"
+        chef.add_recipe "java"
+        chef.add_recipe "git"
+        chef.add_recipe "maven"
+        # You may also specify custom JSON attributes:
+        chef.json = {
+          :java => {
+            'install_flavor' => "oracle",
+            'jdk_version' => "6",
+            'oracle' => {
+              'accept_oracle_download_terms' => true
+            }
+          },
+          :maven => {
+            'version' => '3',
+            'repository_root' => '/home/vagrant'
+          }
+        }
+      end
+
+      cfg.vm.provision :shell, :inline => 'sudo apt-get -q -y install build-essential libtool autoconf automake libcurl3 libcurl3-gnutls libcurl4-openssl-dev python python-dev'
+
+      cfg.vm.provision :shell do |s|
+        s.path = "scripts/populate_sshkey.sh"
+        s.args = "/root root"
+      end
+      cfg.vm.provision :shell do |s|
+        s.path = "scripts/populate_sshkey.sh"
+        s.args = "/home/vagrant vagrant"
+      end
+
+      if i == 0
+        cfg.vm.provision :shell, :inline => "sudo -u vagrant /vagrant/scripts/mesos-build.sh /home/vagrant /usr/local"
+      else
+  cfg.vm.provision :shell, :inline => "rsync -az --delete --exclude '.git*' vagrant@#{ninfolist[0][:hostname]}:/home/vagrant/mesos /home/vagrant/"
+      end
+
+      cfg.vm.provision :shell do |s|
+        s.path = 'scripts/mesos-install.sh'
+        s.args = "/home/vagrant /usr/local #{ninfo[:hostname]}"
+      end
+
+    end
+  end
+end
