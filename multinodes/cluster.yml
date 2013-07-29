@@ -1,0 +1,11 @@
+master_n: 1
+slave_n : 1
+zk_force: false
+
+master_mem: 512
+slave_mem : 1024
+zk_mem    : 256
+
+master_ipbase: "192.168.31."
+slave_ipbase : "192.168.32."
+zk_ipbase    : "192.168.33."

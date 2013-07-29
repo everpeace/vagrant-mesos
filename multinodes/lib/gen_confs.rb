@@ -29,8 +29,7 @@ def gen_confs(node_infos)
                File.join(mesos_conf_dir, "mesos-deploy-env.sh"))
 
   require 'erb'
-  mesos_master_url = zk_infos.length > 0 ? "zk://"+zk_infos.map{|zk| zk[:hostname]+":2181"}.join(", ")+"/mesos"
-                                         : "master1:5050"
+  mesos_master_url = zk_infos.length > 0 ? "zk://"+zk_infos.map{|zk| zk[:hostname]+":2181"}.join(", ")+"/mesos" : "master1:5050"
   master_infos.each do |master|
     File.open(File.join(mesos_conf_dir, "mesos-#{master[:hostname]}-env.sh"), "w") do |file|
       erb = ERB.new(File.read(File.join(conf_templates_dir, "mesos-master-env.sh.erb")))

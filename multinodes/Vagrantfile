@@ -3,25 +3,9 @@
 require './lib/gen_node_infos'
 require './lib/gen_confs'
 
-# Cluster configurations
-master_n = 1     # number of master
-slave_n  = 1     # number of slaves
-force_zk = false # enforce to use zookeeper
-                 # even if master_n is 1.
-
-# VM Settings
-zk_ipbase     = "192.168.30."
-master_ipbase = "192.168.31."
-slave_ipbase  = "192.168.32."
-master_mem    = "512"          # in MB
-slave_mem     = "1024"         # in MB
-zk_mem        = "256"          # in MB
-
-
-node_infos = gen_node_infos( master_n, master_ipbase, master_mem,
-                             slave_n,  slave_ipbase,  slave_mem,
-                                       zk_ipbase,     zk_mem,
-                             force_zk)
+base_dir = File.expand_path(File.dirname(__FILE__))
+cluster_yml = YAML.load(File.read(File.join(base_dir, "cluster.yml")))
+node_infos = gen_node_infos(cluster_yml)
 gen_confs(node_infos)
 master_infos = node_infos[:master]
 slave_infos = node_infos[:slave]
@@ -41,7 +25,7 @@ Vagrant.configure("2") do |config|
   # STRONGLY RECOMMENDED
   # if you want to use vagrant-cachier vagrant plugin,
   # please activate below.
-  # config.cache.auto_detect = true
+  config.cache.auto_detect = true
 
   # define VMs. all VMs has identical configuration.
   ninfolist = [master_infos, slave_infos, zk_infos].flatten
