@@ -76,23 +76,22 @@ please try below by following the [getting started](http://mesos.apache.org/gett
 Multinode environment
 ----
 ### How to define cluster configurations
-You can edit the top section of `Vagrantfile` in the directory.
-default setting is like below.
+Cluster configuration is defined at `cluster.yml`.
+You can edit the file to congigure cluster configurations.
 
 ```
 # Cluster configurations
-master_n = 1     # number of masters
-slave_n  = 1     # number of slaves
-force_zk = false # enforce to use zookeeper
-                 # even if master_n is 1.
+master_n: 1
+slave_n : 1
+zk_force: false
 
-# VM Settings
-zk_ipbase     = "192.168.30."
-master_ipbase = "192.168.31."
-slave_ipbase  = "192.168.32."
-master_mem    = "512"          # in MB
-slave_mem     = "1024"         # in MB
-zk_mem        = "256"          # in MB
+master_mem: 512
+slave_mem : 1024
+zk_mem    : 256
+
+master_ipbase: "192.168.31."
+slave_ipbase : "192.168.32."
+zk_ipbase    : "192.168.33."
 ```
 
 ### Start & Stop Cluster
