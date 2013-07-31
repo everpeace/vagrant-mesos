@@ -4,7 +4,7 @@ Setting up Mesos using Vagrant
 This contains two vagrant sandbox environment.
 
 * standalone environment
-* cluster environment (still buggy.)
+* cluster environment (still buggy. please refer to [MESOS-435](https://issues.apache.org/jira/browse/MESOS-435?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel))
   * mesos ships useful [mesos-ec2 scripts](https://github.com/apache/mesos/blob/master/docs/EC2-Scripts.textile). you can try it. 
 
 
