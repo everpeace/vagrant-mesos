@@ -2,8 +2,8 @@
 
 function usage(){
   cat << EOS
-mesos-vagrant: vagrant wrapper helper script for controlling a mesos cluster.
-Usage: mesos-vagrant [-h] command
+vagrant-mesos: vagrant wrapper helper script for controlling a mesos cluster.
+Usage: vagrant-mesos [-h] command
 
    -h,  --help                       Print this help.
 

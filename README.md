@@ -96,40 +96,40 @@ zk_mem        = "256"          # in MB
 ```
 
 ### Start & Stop Cluster
-In multinode environment, `mesos-vagrant`, which is a helper script for controling mesos cluster is provided.
+In multinode environment, `vagrant-mesos`, which is a helper script for controling mesos cluster is provided.
 
 #### Launch a Cluster
 This takes several minutes(may be 10 to 20 min.).  It's time for coffee.
 
 ```
 $ cd multinodes
-$ ./mesos-vagrant launch
+$ ./vagrant-mesos launch
 ```
 #### Start/Stop a Cluster
 ```
 $ cd multinodes
-$ ./mesos-vagrant [start|stop]
+$ ./vagrant-mesos [start|stop]
 ```
 
 #### Check a Status of a Cluster
 ```
 $ cd multinodes
-$ ./mesos-vagrant status
+$ ./vagrant-mesos status
 ```
 
 ### Destroy a Cluster
 this operations delete all VMs consisting mesos cluster.
 ```
 $ cd multinodes
-$ ./mesos-vagrant destroy
+$ ./vagrant-mesos destroy
 ```
 
-### Usage of `mesos-vagrant`
+### Usage of `vagrant-mesos`
 ```
 $ cd multinodes
-$ ./mesos-vagrant -h
-mesos-vagrant: vagrant wrapper helper script for controlling a mesos cluster.
-Usage: mesos-vagrant [-h] command
+$ ./vagrant-mesos -h
+vagrant-mesos: vagrant wrapper helper script for controlling a mesos cluster.
+Usage: vagrant-mesos [-h] command
 
    -h,  --help                       Print this help.
 
