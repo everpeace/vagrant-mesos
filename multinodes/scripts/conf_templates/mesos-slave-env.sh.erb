@@ -9,6 +9,7 @@
 # non-ZooKeeper based masters, otherwise a zk:// or file:// URL.
 
 export MESOS_master=<%= mesos_master_url %>
+export MESOS_ip=<%= slave_ip %>
 
 # Other options you're likely to want to set:
 export MESOS_log_dir=/var/log/mesos
