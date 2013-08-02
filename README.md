@@ -4,8 +4,8 @@ Setting up Mesos using Vagrant
 This contains two vagrant sandbox environment.
 
 * standalone environment
-* cluster environment (still buggy. please refer to [MESOS-435](https://issues.apache.org/jira/browse/MESOS-435?page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel))
-  * mesos ships useful [mesos-ec2 scripts](https://github.com/apache/mesos/blob/master/docs/EC2-Scripts.textile). you can try it. 
+* multi nodes cluster environment
+  * If you prefer to EC2 environment, mesos also ships useful [mesos-ec2 scripts](https://github.com/apache/mesos/blob/master/docs/EC2-Scripts.textile). you can try this also.
 
 
 Prerequisites
@@ -21,7 +21,7 @@ Prerequisites
           `$ vagrant plugin install vagrant-hosts`
     * [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)(optional)
           `$ vagrant plugin install vagrant-cachier`
- 
+
 Standalone Environment
 ----
 ### Setup a Mesos Virtual Box
@@ -29,7 +29,7 @@ It's so simple! It's time to get a cup of coffee because this may take some time
 
     $ cd standalone
     $ vagrant up
-    
+
 ### Mesos cluster in single node.
 log in to the VM and you just need to hit below commands.
 
