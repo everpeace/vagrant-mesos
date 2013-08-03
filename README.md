@@ -81,9 +81,9 @@ You can edit the file to congigure cluster configurations.
 
 ```
 # Cluster configurations
-master_n: 1
-slave_n : 1
-zk_force: false
+master_n: 1           # hostname will be master1,master2,… 
+slave_n : 2           # hostname will be slave1,slave2,…
+zk_force: false       # hostname will be zk1,zk2,… 
 
 master_mem: 512
 slave_mem : 1024
@@ -95,7 +95,7 @@ zk_ipbase    : "192.168.33."
 ```
 
 ### Start & Stop Cluster
-In multinode environment, `vagrant-mesos`, which is a helper script for controling mesos cluster is provided.
+In multinode environment, `vagrant-mesos`, which is a vagrant wrapper script to help controling mesos cluster, is provided.
 
 #### Launch a Cluster
 This takes several minutes(may be 10 to 20 min.).  It's time for coffee.
@@ -104,11 +104,19 @@ This takes several minutes(may be 10 to 20 min.).  It's time for coffee.
 $ cd multinodes
 $ ./vagrant-mesos launch
 ```
+
 #### Start/Stop a Cluster
 ```
 $ cd multinodes
 $ ./vagrant-mesos [start|stop]
 ```
+#### Connect to Mesos Web UI
+mesos master listen on port 5050 on `192.168.31.??`(virtual private IP). So, by normal virtual box NAT setting, host os can't connect to mesos master. To connect mesos master, you can use ssh port forwarding like this.
+
+```
+$ vagrant ssh master1 -- -L15050:master1:5050
+```
+Then, you can connect mesos web ui on <http://localhost:15050>
 
 #### Check a Status of a Cluster
 ```
@@ -116,12 +124,14 @@ $ cd multinodes
 $ ./vagrant-mesos status
 ```
 
-### Destroy a Cluster
+#### Destroy a Cluster
 this operations delete all VMs consisting mesos cluster.
+
 ```
 $ cd multinodes
 $ ./vagrant-mesos destroy
 ```
+
 
 ### Usage of `vagrant-mesos`
 ```

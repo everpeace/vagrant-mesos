@@ -38,7 +38,7 @@ Vagrant.configure("2") do |config|
       # for mesos web UI.
       if ninfo[:hostname].start_with? "master" then
         hostport = (/master(\d+)/.match ninfo[:hostname])[1].to_i*10000+5050
-        cfg.vm.network :forwarded_port, guest: 5050, host: hostport
+#        cfg.vm.network :forwarded_port, guest: 5050, host: hostport
       end
 
       cfg.vm.provider :virtualbox do |vb|

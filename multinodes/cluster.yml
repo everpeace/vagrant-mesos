@@ -1,6 +1,6 @@
 master_n: 1
-slave_n : 1
-zk_force: false
+slave_n : 2
+zk_force: 1
 
 master_mem: 512
 slave_mem : 1024
