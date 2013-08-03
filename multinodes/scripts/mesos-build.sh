@@ -12,6 +12,5 @@ cd $MESOS_DIR
 mkdir -p $MESOS_BUILD_DIR && cd $MESOS_BUILD_DIR
 ../configure --prefix=$MESOS_PREFIX
 make
-# chown -R  $MESOS_DIR
-# sudo make check  # comment out if some tests failed.
+sudo make check  # comment out if some tests failed.
 
