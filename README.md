@@ -83,7 +83,8 @@ You can edit the file to congigure cluster configurations.
 # Cluster configurations
 master_n: 1           # hostname will be master1,master2,… 
 slave_n : 2           # hostname will be slave1,slave2,…
-zk_force: false       # hostname will be zk1,zk2,… 
+zk_force: false       # force to create zookeeper servers(zk1,zk2,…)
+                      # even if master_n is 1.
 
 master_mem: 512
 slave_mem : 1024
