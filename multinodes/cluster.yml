@@ -3,7 +3,7 @@ slave_n : 3
 zk_force: false # force to create zookeeper
                 # even if master_n is 1.
 
-master_mem: 512
+master_mem: 1024
 slave_mem : 1024
 zk_mem    : 256
 
