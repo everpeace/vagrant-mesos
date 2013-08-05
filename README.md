@@ -42,17 +42,17 @@ if you want to try mesos with zookeeper, which is responsible for managing maste
 
 1. change `chef.json[:mesos]` in `Vagrantfile` to
 
-       :mesos => {
-         :cluster_name => "MyCluster",
-         :master_ips => ["localhost"],
-         :slave_ips  => ["localhost"],
-         :master => {
-           :zk => "zk://localhost:2181/mesos"
-         }, 
-         :slave =>{
-           :master_url => "zk//localhost:2181/mesos",
-         }
-       }
+        :mesos => {
+          :cluster_name => "MyCluster",
+          :master_ips => ["localhost"],
+          :slave_ips  => ["localhost"],
+          :master => {
+            :zk => "zk://localhost:2181/mesos"
+          }, 
+          :slave =>{
+            :master_url => "zk//localhost:2181/mesos",
+          }
+        }
 
 1. provision VM again:
 
