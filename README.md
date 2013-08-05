@@ -31,25 +31,36 @@ It's so simple! It's time to get a cup of coffee because this may take some time
     $ vagrant up
 
 ### Mesos cluster in single node.
-log in to the VM and you just need to hit below commands.
+just hit below command.
 
-1. start a mesos master:
-
-        $ vagrant ssh
-        vagrant@mesos$ sudo mesos-master
-1. start a mesos slave:
-
-        $ vagrat ssh
-        vagrant@mesos$ sudo mesos-slave --master=mesos:5050
-
+        $ vagrant ssh -c 'mesos-start-cluster.sh'
+        
 If everything went well, you can see mesos web UI on: <http://localhost:5050>
 
 ### Mesos cluster managed with zookeeper
 if you want to try mesos with zookeeper, which is responsible for managing master processes, you can try belows.
 
-1. start zookeeper:
+1. change `chef.json[:mesos]` in `Vagrantfile` to
 
-        $ vagrant ssh
+       :mesos => {
+         :cluster_name => "MyCluster",
+         :master_ips => ["localhost"],
+         :slave_ips  => ["localhost"],
+         :master => {
+           :zk => "zk://localhost:2181/mesos"
+         }, 
+         :slave =>{
+           :master_url => "zk//localhost:2181/mesos",
+         }
+       }
+
+1. provision VM again:
+
+        $ vagrant provision
+
+2. start zookeeper:
+
+        $ vagrant ssh 
         vagrant@mesos$ cd mesos/build/3rdparty/zookeeper-3.3.4/
         vagrant@mesos$ cp conf/zoo_sample.cfg conf/zoo.cfg
         vagrant@mesos$ sudo bin/zkServer.sh start
@@ -61,14 +72,14 @@ if you want to try mesos with zookeeper, which is responsible for managing maste
 
 1. start mesos slave with master managed with zookeeper:
 
-        $ vagrant ssh
-        vagrant@mesos$ sudo mesos-slave --master=zk://mesos:2181/mesos
+        $ vagrant ssh -c 'mesos-start-cluster.sh'
 
 ### Try some example frameworks
 please try below by following the [getting started](http://mesos.apache.org/gettingstarted/) document.
 
     $ vagrant ssh
-    vagrant@mesos$ cd mesos/build
+    vagrant@mesos$ cd /tmp/mesos-???/build
+    vagrant@mesos$ sudo make check
     vagrant@mesos$ src/test-framework --master=mesos:5050       # or --master=zk://mesos:2181/mesos
     vagrant@mesos$ src/example/java/test-framework mesos:5050   # or zk://mesos:2181/mesos
     vagrant@mesos$ src/example/python/test-framework mesos:5050 # or zk://mesos:2181/mesos
