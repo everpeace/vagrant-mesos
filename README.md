@@ -34,7 +34,7 @@ It's so simple! It's time to get a cup of coffee because this may take some time
 just hit below command.
 
         $ vagrant ssh -c 'mesos-start-cluster.sh'
-        
+
 If everything went well, you can see mesos web UI on: <http://localhost:5050>
 
 ### Mesos cluster managed with zookeeper
@@ -48,9 +48,9 @@ if you want to try mesos with zookeeper, which is responsible for managing maste
           :slave_ips  => ["localhost"],
           :master => {
             :zk => "zk://localhost:2181/mesos"
-          }, 
+          },
           :slave =>{
-            :master_url => "zk//localhost:2181/mesos",
+            :master_url => "zk://localhost:2181/mesos",
           }
         }
 
@@ -60,7 +60,7 @@ if you want to try mesos with zookeeper, which is responsible for managing maste
 
 2. start zookeeper:
 
-        $ vagrant ssh 
+        $ vagrant ssh
         vagrant@mesos$ cd mesos/build/3rdparty/zookeeper-3.3.4/
         vagrant@mesos$ cp conf/zoo_sample.cfg conf/zoo.cfg
         vagrant@mesos$ sudo bin/zkServer.sh start
@@ -92,7 +92,7 @@ You can edit the file to congigure cluster configurations.
 
 ```
 # Cluster configurations
-master_n: 1           # hostname will be master1,master2,… 
+master_n: 1           # hostname will be master1,master2,…
 slave_n : 2           # hostname will be slave1,slave2,…
 zk_force: false       # force to create zookeeper servers(zk1,zk2,…)
                       # even if master_n is 1.
