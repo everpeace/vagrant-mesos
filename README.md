@@ -65,12 +65,7 @@ if you want to try mesos with zookeeper, which is responsible for managing maste
         vagrant@mesos$ cp conf/zoo_sample.cfg conf/zoo.cfg
         vagrant@mesos$ sudo bin/zkServer.sh start
 
-1. start mesos master with zookeeper:
-
-        $ vagrant ssh
-        vagrant@mesos$ sudo mesos-master --zk=zk://mesos:2181/mesos
-
-1. start mesos slave with master managed with zookeeper:
+1. start mesos cluster with zookeeper managed master:
 
         $ vagrant ssh -c 'mesos-start-cluster.sh'
 
