@@ -74,7 +74,7 @@ if you want to try mesos with zookeeper, which is responsible for managing maste
 please try below by following the [getting started](http://mesos.apache.org/gettingstarted/) document.
 
     $ vagrant ssh
-    vagrant@mesos$ cd /tmp/mesos-???/build
+    vagrant@mesos$ cd /home/vagrant/mesos/build
     vagrant@mesos$ sudo make check
     vagrant@mesos$ src/test-framework --master=mesos:5050       # or --master=zk://mesos:2181/mesos
     vagrant@mesos$ src/examples/java/test-framework mesos:5050   # or zk://mesos:2181/mesos
