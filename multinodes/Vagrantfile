@@ -1,12 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 require './lib/gen_node_infos'
-require './lib/gen_confs'
 
 base_dir = File.expand_path(File.dirname(__FILE__))
 cluster_yml = YAML.load(File.read(File.join(base_dir, "cluster.yml")))
 node_infos = gen_node_infos(cluster_yml)
-gen_confs(node_infos)
 master_infos = node_infos[:master]
 slave_infos = node_infos[:slave]
 zk_infos = node_infos[:zk]
@@ -35,11 +33,9 @@ Vagrant.configure("2") do |config|
       cfg.vm.network :private_network, :ip => ninfo[:ip]
       cfg.vm.provision :hosts
 
-      # for mesos web UI.
-      if ninfo[:hostname].start_with? "master" then
-        hostport = (/master(\d+)/.match ninfo[:hostname])[1].to_i*10000+5050
-#        cfg.vm.network :forwarded_port, guest: 5050, host: hostport
-      end
+#      if ninfo[:hostname].start_with? "master" then
+#        hostport = (/master(\d+)/.match ninfo[:hostname])[1].to_i*10000+5050
+#      end
 
       cfg.vm.provider :virtualbox do |vb|
         vb.name = 'vagrant-mesos-' + ninfo[:hostname]
@@ -47,48 +43,64 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--memory", ninfo[:mem] ]
       end
 
-      cfg.vm.provision :chef_solo do |chef|
-        chef.log_level = :debug
-        chef.add_recipe "apt"
-        chef.add_recipe "java"
-        chef.add_recipe "git"
-        chef.add_recipe "maven"
-        # You may also specify custom JSON attributes:
-        chef.json = {
-          :java => {
-            'install_flavor' => "oracle",
-            'jdk_version' => "6",
-            'oracle' => {
-              'accept_oracle_download_terms' => true
-            }
-          },
-          :maven => {
-            'version' => '3',
-            'repository_root' => '/home/vagrant'
-          }
-        }
-      end
-
-      cfg.vm.provision :shell, :inline => 'sudo apt-get -q -y install build-essential libtool autoconf automake libcurl3 libcurl3-gnutls libcurl4-openssl-dev python python-dev'
-
       cfg.vm.provision :shell do |s|
         s.path = "scripts/populate_sshkey.sh"
         s.args = "/root root"
       end
+
       cfg.vm.provision :shell do |s|
         s.path = "scripts/populate_sshkey.sh"
         s.args = "/home/vagrant vagrant"
       end
 
-      if i == 0
-        cfg.vm.provision :shell, :inline => "sudo -u vagrant /vagrant/scripts/mesos-build.sh /home/vagrant /usr/local"
-      else
-  cfg.vm.provision :shell, :inline => "rsync -az --delete --exclude '.git*' vagrant@#{ninfolist[0][:hostname]}:/home/vagrant/mesos /home/vagrant/"
+      cfg.vm.provision :chef_solo do |chef|
+        chef.log_level = :debug
+        chef.add_recipe "apt"
+        chef.add_recipe "mesos::install"
+
+        java_setting = {
+          'install_flavor' => "oracle",
+          'jdk_version' => "6",
+          'oracle' => {
+            'accept_oracle_download_terms' => true
+          }
+        }
+
+        mesos_setting = {
+          :version      => "master",
+          :cluster_name => "MyCluster",
+          :home         => "/home/vagrant",
+          :master_ips   => master_infos.map{|m| "#{m[:ip]}" },
+          :slave_ips    => slave_infos.map{|s| "#{s[:ip]}" },
+        }
+
+        if /master[0-9]+/ =~ ninfo[:hostname] then
+          chef.add_recipe "mesos::master"
+          mesos_setting[:master] = if zk_infos.length > 0 then
+             {
+               :zk => "zk://"+zk_infos.map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos",
+               :ip => "#{ninfo[:ip]}"
+             }
+          else
+             {
+               :ip => "#{ninfo[:ip]}"
+             }
+          end
+        elsif /slave[0-9]+/ =~ ninfo[:hostname] then
+          chef.add_recipe "mesos::slave"
+          mesos_setting[:slave]= {
+            :master_url => zk_infos.length > 0 ? "zk://"+zk_infos.map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos":"#master_infos[0][:ip]}:5050",
+            :ip         => "#{ninfo[:ip]}"
+          }
+        end
+        chef.json = {
+          :java  => java_setting,
+          :mesos => mesos_setting
+        }
       end
 
-      cfg.vm.provision :shell do |s|
-        s.path = 'scripts/mesos-install.sh'
-        s.args = "/home/vagrant /usr/local #{ninfo[:hostname]}"
+      if /zk[0-9]+/ =~ ninfo[:hostname] then
+        cfg.vm.provision :shell, :inline => "ruby /vagrant/scripts/gen_zoo_conf.rb > /home/vagrant/mesos/build/3rdparty/zookeeper-3.3.4/conf/zoo.cfg"
       end
 
     end

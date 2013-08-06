@@ -1,11 +1,11 @@
 master_n: 1
-slave_n : 3
-zk_force: false # force to create zookeeper
+slave_n : 1
+force_zk: true # force to create zookeeper
                 # even if master_n is 1.
 
 master_mem: 1024
 slave_mem : 1024
-zk_mem    : 256
+zk_mem    : 1024
 
 master_ipbase: "192.168.31."
 slave_ipbase : "192.168.32."

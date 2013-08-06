@@ -7,6 +7,7 @@ This contains two vagrant sandbox environment.
 * multi nodes cluster environment
   * If you prefer to EC2 environment, mesos also ships useful [mesos-ec2 scripts](https://github.com/apache/mesos/blob/master/docs/EC2-Scripts.textile). you can try this also.
 
+The setup is provided by mesos chef cookbook.  Please see [everpeace/cookbook-mesos](http://github.com/everpeace/cookbook-mesos).
 
 Prerequisites
 ----
@@ -89,7 +90,7 @@ You can edit the file to congigure cluster configurations.
 # Cluster configurations
 master_n: 1           # hostname will be master1,master2,…
 slave_n : 2           # hostname will be slave1,slave2,…
-zk_force: false       # force to create zookeeper servers(zk1,zk2,…)
+force_zk: false       # force to create zookeeper servers(zk1,zk2,…)
                       # even if master_n is 1.
 
 master_mem: 512

@@ -118,7 +118,6 @@ case $1 in
     ;;
   destroy)
     $VAGRANT $@
-    rm -rf generated
     ;;
   provision|resume|suspend|up)
     $VAGRANT $@

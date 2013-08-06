@@ -1,9 +1,6 @@
 site :opscode
 
 cookbook 'apt'
-cookbook 'java'
-cookbook 'git'
-cookbook 'maven'
-# please see ean's comment in http://community.opscode.com/cookbooks/maven/comments
-cookbook 'ark',  git:'git://github.com/eanrollings/ark.git'
+cookbook "mesos", path: "../../cookbook-mesos"
+# cookbook "mesos", github: "everpeace/cookbook-mesos"
 
