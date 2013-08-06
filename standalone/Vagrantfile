@@ -53,6 +53,7 @@ Vagrant.configure("2") do |config|
       },
       :mesos => {
         :cluster_name => "MyCluster",
+        :home         => "/home/vagrant",
         :master_ips => ["localhost"],
         :slave_ips  => ["localhost"],
         :slave =>{
