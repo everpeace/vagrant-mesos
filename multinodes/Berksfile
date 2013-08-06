@@ -1,6 +1,5 @@
 site :opscode
 
 cookbook 'apt'
-cookbook "mesos", path: "../../cookbook-mesos"
-# cookbook "mesos", github: "everpeace/cookbook-mesos"
+cookbook "mesos", github: "everpeace/cookbook-mesos"
 
