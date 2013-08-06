@@ -77,8 +77,8 @@ please try below by following the [getting started](http://mesos.apache.org/gett
     vagrant@mesos$ cd /tmp/mesos-???/build
     vagrant@mesos$ sudo make check
     vagrant@mesos$ src/test-framework --master=mesos:5050       # or --master=zk://mesos:2181/mesos
-    vagrant@mesos$ src/example/java/test-framework mesos:5050   # or zk://mesos:2181/mesos
-    vagrant@mesos$ src/example/python/test-framework mesos:5050 # or zk://mesos:2181/mesos
+    vagrant@mesos$ src/examples/java/test-framework mesos:5050   # or zk://mesos:2181/mesos
+    vagrant@mesos$ src/examples/python/test-framework mesos:5050 # or zk://mesos:2181/mesos
 
 Multinode environment
 ----
