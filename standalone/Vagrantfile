@@ -38,6 +38,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :chef_solo do |chef|
     # chef.log_level = :debug
     chef.add_recipe "apt"
+#    chef.add_recipe "maven"
     chef.add_recipe "mesos"
     chef.add_recipe "mesos::master"
     chef.add_recipe "mesos::slave"
@@ -49,6 +50,15 @@ Vagrant.configure("2") do |config|
         'jdk_version' => "6",
         'oracle' => {
           'accept_oracle_download_terms' => true
+        }
+      },
+      :maven => {
+        :version => "3",
+        "3" => {
+          :version => "3.0.5"
+        },
+        :mavenrc => {
+          :opts => "-Dmaven.repo.local=$HOME/.m2/repository -Xmx384m -XX:MaxPermSize=192m"
         }
       },
       :mesos => {
