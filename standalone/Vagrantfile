@@ -27,7 +27,8 @@ Vagrant.configure("2") do |config|
   config.vm.provider :virtualbox do |vb|
     vb.name = 'vagrant-mesos-standalone'
     # Use VBoxManage to customize the VM. For example to change memory:
-    vb.customize ["modifyvm", :id, "--memory", "2048"]
+    vb.customize ["modifyvm", :id, "--memory", "#{1024*2}"]
+#    vb.customize ["modifyvm", :id,  "--cpus",  "2"]
   end
 
   config.vm.provision :shell do |s|
@@ -67,7 +68,7 @@ Vagrant.configure("2") do |config|
         :master_ips => ["localhost"],
         :slave_ips  => ["localhost"],
         :slave =>{
-          :master_url => "localhost:5050",
+          :master_url => "#{private_ip}:5050",
         }
       }
     }
