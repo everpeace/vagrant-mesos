@@ -1,5 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+require 'yaml'
 require './lib/gen_node_infos'
 
 base_dir = File.expand_path(File.dirname(__FILE__))
