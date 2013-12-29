@@ -1,0 +1,19 @@
+# Please set AWS credentials
+access_key_id:  EDIT_HERE
+secret_access_key: EDIT_HERE
+
+# please choose one from 
+# ["ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1", "us-east-1", 
+#  "us-west-1", "ap-southeast-2", "us-west-2"]
+region: us-east-1
+
+# array of security groups. e.g. ['sg*** ']
+security_groups: EDIT_HERE
+
+# see http://aws.amazon.com/ec2/instance-types/#selecting-instance-types
+# for other instance types and its specs.
+instance_type: m1.small
+
+keypair_name: EDIT_HERE
+
+ssh_private_key_path: EDIT_HERE
