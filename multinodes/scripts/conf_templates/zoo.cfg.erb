@@ -12,6 +12,6 @@ dataDir=/tmp/zookeeper
 clientPort=2181
 <% if zk_infos.length > 1 then %>
 <% zk_infos.each do |z| %>
-server.<%= (/zk(\d+)/.match z[:hostname])[1] %>=<%= z[:hostname] %>:2888:3888
+server.<%= (/zk(\d+)/.match z[:hostname])[1] %>=<%= z[:ip] %>:2888:3888
 <% end %>
 <% end %>

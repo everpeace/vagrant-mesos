@@ -6,28 +6,35 @@ def gen_node_infos(cluster_yml)
   master_mem = cluster_yml['master_mem']
   slave_n = cluster_yml['slave_n']
   slave_mem = cluster_yml['slave_mem']
-  force_zk = cluster_yml['force_zk']
+  zk_n = cluster_yml['zk_n']
   zk_mem = cluster_yml['zk_mem']
   master_ipbase = cluster_yml['master_ipbase']
   slave_ipbase = cluster_yml['slave_ipbase']
   zk_ipbase = cluster_yml['zk_ipbase']
-
+  zk_instance_type = cluster_yml['zk_instance_type']
+  master_instance_type = cluster_yml['master_instance_type']
+  slave_instance_type = cluster_yml['slave_instance_type']
+  
   master_infos = (1..master_n).map do |i|
                    { :hostname => "master#{i}",
                      :ip => master_ipbase + "#{10+i}",
-                     :mem => master_mem }
+                     :mem => master_mem,
+                     :instance_type => master_instance_type 
+                   }
                  end
   slave_infos = (1..slave_n).map do |i|
                    { :hostname => "slave#{i}",
                      :ip => slave_ipbase + "#{10+i}",
-                     :mem => slave_mem }
+                     :mem => slave_mem,
+                     :instance_type => slave_instance_type 
+                   }
                  end
-
-  zk_n = master_n > 1 ? 3 : (force_zk ? 1 : 0)
   zk_infos = (1..zk_n).map do |i|
                { :hostname => "zk#{i}",
                  :ip => zk_ipbase + "#{10+i}",
-                 :mem => zk_mem }
+                 :mem => zk_mem,
+                 :instance_type => zk_instance_type 
+               }
              end
 
   return { :master => master_infos, :slave=>slave_infos, :zk=>zk_infos }
