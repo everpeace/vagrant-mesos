@@ -4,7 +4,7 @@ Setting up Mesos using Vagrant
 This contains two vagrant sandbox environment.
 
 * Standalone environment on VirtualBox or EC2
-* Multi nodes cluster environment on VirtualBox or EC2
+* Multi nodes cluster environment on VirtualBox or EC2 (VPC)
 
 The mesos installation is provided by mesos chef cookbook.  Please see [everpeace/cookbook-mesos](http://github.com/everpeace/cookbook-mesos).
 
@@ -117,9 +117,9 @@ $ cd multinodes
 $ ./vagrant destroy
 ```
 
-Multinode environment with EC2
+Multinode environment with EC2(VPC)
 ----
-Because we require to assign private IP addreses to VM instances, this Vagrantfile use Amazon VPC (you'll have to set subnet_id and security grooups both associated to VPC instance).
+Because we require to assign private IP addreses to VM instances, this Vagrantfile use Amazon VPC (you'll have to set subnet_id and security grooups both associated to the same VPC instance).
 
 ### Cluster Configuration
 You have to configure some additional stuff on `cluster.yml` related to EC2.  Please note that 
