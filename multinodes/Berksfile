@@ -1,5 +1,6 @@
 site :opscode
 
 cookbook 'apt'
+cookbook 'unzip',  github: "wharton/chef-unzip"↲
 cookbook "mesos", github: "everpeace/cookbook-mesos"
 

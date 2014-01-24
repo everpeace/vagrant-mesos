@@ -1,6 +1,7 @@
 site :opscode
 
 cookbook 'apt'
+cookbook 'unzip', github: "wharton/chef-unzip"
 cookbook 'ark', github: "eanrollings/ark"
 cookbook 'maven', github: "opscode-cookbooks/maven"
 cookbook "mesos", github: "everpeace/cookbook-mesos"
