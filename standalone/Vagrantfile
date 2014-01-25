@@ -56,7 +56,7 @@ Vagrant.configure("2") do |config|
     aws.tags = {
       Name: 'vagrant-mesos-standalone'
     }
-
+ 
     override.ssh.username = "ubuntu"
     override.ssh.private_key_path = conf["ssh_private_key_path"]
     override.vm.provision :shell do |s|
@@ -68,7 +68,6 @@ Vagrant.configure("2") do |config|
   config.vm.provision :chef_solo do |chef|
     # chef.log_level = :debug
     chef.add_recipe "apt"
-    chef.add_recipe "unzip"
     chef.add_recipe "mesos"
     chef.add_recipe "mesos::master"
     chef.add_recipe "mesos::slave"
