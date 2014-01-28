@@ -4,28 +4,21 @@ require 'yaml'
 require './lib/gen_node_infos'
 
 base_dir = File.expand_path(File.dirname(__FILE__))
-conf = YAML.load(File.read(File.join(base_dir, "cluster.yml")))
+conf = YAML.load_file(File.join(base_dir, "cluster.yml"))
+ninfos = gen_node_infos(conf)
 ami = YAML.load_file(File.join(base_dir,"scripts","aws_region_ami.yaml"))
-node_infos = gen_node_infos(conf)
-master_infos = node_infos[:master]
-slave_infos = node_infos[:slave]
-zk_infos = node_infos[:zk]
 
 ## vagrant plugins required:
-# vagrant-berkshelf, vagrant-omnibus, vagrant-hosts
+# vagrant-aws, vagrant-berkshelf, vagrant-omnibus, vagrant-hosts, vagrant-cachier
 Vagrant.configure("2") do |config|
 
   # enable plugins
   config.berkshelf.enabled = true
   config.omnibus.chef_version = :latest
-
-  # STRONGLY RECOMMENDED
-  # if you want to use vagrant-cachier vagrant plugin,
-  # please activate below.
   config.cache.auto_detect = true
 
   # define VMs. all VMs has identical configuration.
-  [zk_infos, master_infos, slave_infos].flatten.each_with_index do |ninfo, i|
+  [ninfos[:zk], ninfos[:master], ninfos[:slave]].flatten.each_with_index do |ninfo, i|
     config.vm.define ninfo[:hostname] do |cfg|
 
       cfg.vm.provider :virtualbox do |vb, override|
@@ -37,7 +30,6 @@ Vagrant.configure("2") do |config|
         override.vm.provision :hosts
 
         vb.name = 'vagrant-mesos-' + ninfo[:hostname]
-        # Use VBoxManage to customize the VM. For example to change memory:
         vb.customize ["modifyvm", :id, "--memory", ninfo[:mem] ]
 
         override.vm.provision :shell do |s|
@@ -60,7 +52,7 @@ Vagrant.configure("2") do |config|
 
         aws.region = conf["region"]
         aws.ami = ami[conf["region"]]
-        aws.instance_type = ninfo[:instance_type]          
+        aws.instance_type = ninfo[:instance_type]
         aws.keypair_name = conf["keypair_name"]
         aws.subnet_id = conf["subnet_id"]
         aws.security_groups = conf["security_groups"]
@@ -68,16 +60,10 @@ Vagrant.configure("2") do |config|
         aws.tags = {
           Name: "vagrant-mesos-#{ninfo[:hostname]}"
         }
- 
+
         override.ssh.username = "ubuntu"
         override.ssh.private_key_path = conf["ssh_private_key_path"]
 
-        # override.vm.provision :hosts do |provisioner|
-        #   provisioner.autoconfigure = false
-        #   [zk_infos, master_infos, slave_infos].flatten.each do |ninfo|
-        #     provisioner.add_host "#{ninfo[:ip]}", ["#{ninfo[:hostname]}"]
-        #   end
-        # end
         override.vm.provision :shell do |s|
           s.path = "scripts/populate_sshkey.sh"
           s.args = "/home/ubuntu ubuntu"
@@ -88,65 +74,61 @@ Vagrant.configure("2") do |config|
 #       chef.log_level = :debug
         chef.add_recipe "apt"
         chef.add_recipe "mesos"
-#       chef.add_recipe "maven"
-
-        mesos_setting = {}
 
         if /master[0-9]+/ =~ ninfo[:hostname] then
           chef.add_recipe "mesos::master"
-          mesos_setting = {
-            :type         => "mesosphere",
-            :version      => "0.15.0-rc5",
-            :master_ips   => master_infos.map{|m| "#{m[:ip]}" },
-            :slave_ips    => slave_infos.map{|s| "#{s[:ip]}" },
-            :master       => if zk_infos.length > 0 then
-              {
-                :cluster => "MyCluster",
-                :zk => "zk://"+zk_infos.map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos",
-                :ip => "#{ninfo[:ip]}"
-              }
-            else
-              {
-                :cluster => "MyCluster",
-                :ip => "#{ninfo[:ip]}"
-              }
-            end
-          }
-
-        elsif /slave[0-9]+/ =~ ninfo[:hostname] then
-          chef.add_recipe "mesos::slave"
-          mesos_setting = {
-            :type         => "mesosphere",
-            :version      => "0.15.0-rc5",
-            :slave        => {
-              :master       => if zk_infos.length > 0 then 
-                                 "zk://"+zk_infos.map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos"
-                               else 
-                                 "#{master_infos[0][:ip]}:5050"
-                               end,
-              :ip           => "#{ninfo[:ip]}"
+          chef.json  = {
+            :mesos=> {
+              :type         => "mesosphere",
+              :version      => "0.15.0-rc5",
+              :master_ips   => ninfos[:master].map { |m| "#{m[:ip]}" },
+              :slave_ips    => ninfos[:slave].map { |s| "#{s[:ip]}" },
+              :master       => if ninfos[:zk].length > 0 then
+                {
+                  :cluster => "MyCluster",
+                  :zk => "zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos",
+                  :ip => "#{ninfo[:ip]}"
+                }
+              else
+                {
+                  :cluster => "MyCluster",
+                  :ip => "#{ninfo[:ip]}"
+                }
+              end
             }
           }
-
+        elsif /slave[0-9]+/ =~ ninfo[:hostname] then
+          chef.add_recipe "mesos::slave"
+          chef.json = {
+            :mesos => {
+              :type         => "mesosphere",
+              :version      => "0.15.0-rc5",
+              :slave        => {
+                :master       => if ninfos[:zk].length > 0 then
+                                   "zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos"
+                                 else
+                                   "#{ninfos[:master][0][:ip]}:5050"
+                                 end,
+                :ip           => "#{ninfo[:ip]}"
+              }
+            }
+          }
         elsif /zk[0-9]+/ =~ ninfo[:hostname] then
-          mesos_setting = {
-            :type         => "mesosphere",
-            :version      => "0.15.0-rc5",
-            :mesosphere   => {
-              :with_zookeeper => true
+          chef.json = {
+            :mesos => {
+              :type         => "mesosphere",
+              :version      => "0.15.0-rc5",
+              :mesosphere   => {
+                :with_zookeeper => true
+              }
             }
           }
         end
-
-        chef.json = {
-          :mesos => mesos_setting
-        }
       end
-
 
       if /zk[0-9]+/ =~ ninfo[:hostname] then
         myid = (/zk([0-9]+)/.match ninfo[:hostname])[1]
-        zk_script = <<SCRIPT
+        cfg.vm.provision :shell, :inline => <<SCRIPT
           sudo mkdir -p /tmp/zookeeper
           sudo chmod 755 /tmp/zookeeper
           sudo chown zookeeper /tmp/zookeeper
@@ -154,9 +136,7 @@ Vagrant.configure("2") do |config|
           sudo -u zookeeper /opt/chef/embedded/bin/ruby /vagrant/scripts/gen_zoo_conf.rb > /etc/zookeeper/conf/zoo.cfg
           sudo restart zookeeper
 SCRIPT
-        cfg.vm.provision :shell, :inline => zk_script
       end
-
     end
   end
 end
