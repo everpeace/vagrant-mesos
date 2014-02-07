@@ -213,7 +213,7 @@ $ vagrant halt
 ### Resume your Cluster
 ```
 $ cd multinodes
-$ vagrant reload
+$ vagrant reload --provision
 ```
 
 #### Destroy your Cluster
