@@ -14,7 +14,7 @@ master_mem: 256
 slave_mem : 256
 
 # private ip bases
-# When ec2, this should be matched with 
+# When ec2, this should be matched with
 # private addresses defined by subnet_id below.
 ################################################
 zk_ipbase    : "172.31.0."
@@ -24,17 +24,21 @@ slave_ipbase : "172.31.2."
 
 
 # EC2 Configurations
-# please choose one region from  
+# please choose one region from
 # ["ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1",
 #  "us-east-1", "us-west-1", "ap-southeast-2", "us-west-2"]
+# NOTE: if you used non-default vpc, you should make sure that
+#       limit of the elastic ips is no less than (zk_n + master_n + slave_n).
+#       In EC2, the limit default is 5.
 ########################
 access_key_id:  EDIT_HERE
 secret_access_key: EDIT_HERE
+default_vpc: true                     # default vpc or not.
 subnet_id: EDIT_HERE               # VPC subnet id
 security_groups: ["EDIT_HERE"]     # array of VPN security groups. e.g. ['sg*** ']
 keypair_name: EDIT_HERE
 ssh_private_key_path: EDIT_HERE
-region: EDIT_HERE            
+region: EDIT_HERE
 
 # see http://aws.amazon.com/ec2/instance-types/#selecting-instance-types
 zk_instance_type: m1.small

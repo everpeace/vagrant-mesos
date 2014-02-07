@@ -117,15 +117,18 @@ $ cd multinodes
 $ ./vagrant destroy
 ```
 
-Multinode environment with EC2(VPC)
+Multinode environment with EC2 (VPC)
 ----
-Because we require to assign private IP addreses to VM instances, this Vagrantfile use Amazon VPC (you'll have to set subnet_id and security grooups both associated to the same VPC instance).
+Because we require to assign private IP addreses to VM instances, this Vagrantfile uses Amazon VPC (you'll have to set subnet_id and security grooups both associated to the same VPC instance).
+
+_Note: Using default VPC is highly recommended.  If you used non-default vpc, you should make sure that limit of the elastic ips is no less than (zk_n + master_n + slave_n).  The limit default is 5._
 
 ### Cluster Configuration
 You have to configure some additional stuff on `cluster.yml` related to EC2.  Please note that 
 
 * subnet_id should be a VPC subnet
 * security groups should be ones associated to the VPC instance.
+	* security groups should allow accesses to ports 22(SSH), 2181(zookeeper) and 5050--(mesos).
 
 ```
 (cont.)
@@ -133,9 +136,13 @@ You have to configure some additional stuff on `cluster.yml` related to EC2.  Pl
 # please choose one region from  
 # ["ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1",
 #  "us-east-1", "us-west-1", "ap-southeast-2", "us-west-2"]
+# NOTE: if you used non-default vpc, you should make sure that
+#       limit of the elastic ips is no less than (zk_n + master_n + slave_n).
+#       In EC2, the limit default is 5.
 ########################
 access_key_id:  EDIT_HERE
 secret_access_key: EDIT_HERE
+default_vpc: true                  # default vpc or not.
 subnet_id: EDIT_HERE               # VPC subnet id
 security_groups: ["EDIT_HERE"]     # array of VPN security groups. e.g. ['sg*** ']
 keypair_name: EDIT_HERE
@@ -159,6 +166,23 @@ $ vagrant up --provision aws (--no-parallel)
 After instances are all up, you can see mesos web UI on: `http://#_public_dns_of_the_master_N_#:5050` if everything went well. 
 
 __CAUTION__: due to [MESOS-672](https://issues.apache.org/jira/browse/MESOS-672), mesos web ui fails redirection to the present leader of mesos master.  So, you need to access each master web ui manually (you can find public dns name for masters on amazon aws console).
+
+If you wanted to make sure that the specific mastar(e.g. `master1e`) could be an initial leader, you can cotrol the order of spinning up vm like below.
+
+```
+$ cd multinode
+# firtsly, you spin up an zookeeper ensemble
+$ vagrant up --provider aws /zk/
+
+# second, you spin up master1. master1 will be an initial leader
+$ vagrant up --provider aws master1
+
+# you up remained masters
+$ vagrant up --provider aws /master[2-9]/
+
+# you spin up slaves
+$ vagrant up --provider aws /slave/
+```
 
 #### Destroy a Cluster
 this operations terminates all VMs instances forming the cluster.
