@@ -1,17 +1,20 @@
-Setting up Mesos using Vagrant
-===
+<div style="background:#004561;margin-left:70%;padding-left:10px;padding-top:3px;color:#fff;width:125px;text-algin:right"><a href="http://mesos.apache.org"><img src="http://mesos.apache.org/assets/img/mesos_logo.png" height="50px"/></a></div>
 
-This contains two vagrant sandbox environment.
+# vagrant-mesos: Spin up your [Mesos](http://mesos.apache.org) Cluster
 
-* Standalone environment on VirtualBox or EC2
-* Multi nodes cluster environment on VirtualBox or EC2 (VPC)
+* Using VirtualBox
+	* [Mesos Standalone on VirtualBox](#svb)
+	* [Mesos Cluster on VirtualBox](#clvb)
+* Using Amazon EC2
+	* [Mesos Standalone on EC2](#sec2)
+	* [Mesos Cluster on EC2 (VPC)](#clec2)
 
 The mesos installation is provided by mesos chef cookbook.  Please see [everpeace/cookbook-mesos](http://github.com/everpeace/cookbook-mesos).
 
 Prerequisites
 ----
-* VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
 * vagrant 1.2+: <http://www.vagrantup.com/>
+* VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
 * vagrant plugins
     * [vagrant-omnibus](https://github.com/schisamo/vagrant-omnibus)
           `$ vagrant plugin install vagrant-omnibus`
@@ -24,7 +27,8 @@ Prerequisites
     * [vagrant-aws](https://github.com/mitchellh/vagrant-aws) (only if you use ec2.)
     	   `$ vagrant plugin install vagrant-aws`
 
-Standalone Environment with VirtualBox
+<a name="svb"></a>
+Mesos Standalone on VirtualBox
 ----
 It's so simple!
 
@@ -33,7 +37,8 @@ It's so simple!
 
 After box is up, you can see mesos web UI on: <http://localhost:5050> if everything went well.
 
-Standalone Environment with EC2
+<a name="sec2"></a>
+Mesos Standalone on EC2
 ----
 1. configure ec2 credentials and some settings defined in `standalone/aws_config.yml`. You have to fill up `EDIT_HERE` parts.  Security group you'll set must accept at least tcp port 22(SSH) and 5050(mesos-master web ui) from outside of ec2.
 
@@ -71,7 +76,8 @@ Standalone Environment with EC2
 	http://ec2-54-193-24-154.us-west-1.compute.amazonaws.com:5050
 	```
 
-Multinode environment with VirtualBox
+<a name="clvb"></a>
+Mesos Cluster on VirtualBox
 ----
 ### Cluster Configuration
 Cluster configuration is defined at `cluster.yml`.  You can edit the file to congigure cluster configurations.
@@ -124,7 +130,8 @@ $ cd multinodes
 $ ./vagrant destroy
 ```
 
-Multinode environment with EC2 (VPC)
+<a name="clec2"></a>
+Mesos Cluster on EC2 (VPC)
 ----
 Because we require to assign private IP addreses to VM instances, this Vagrantfile uses Amazon VPC (you'll have to set subnet_id and security grooups both associated to the same VPC instance).
 
@@ -199,10 +206,22 @@ $ vagrant up --provider aws /master[2-9]/
 $ vagrant up --provider aws /slave/
 ```
 
-#### Destroy a Cluster
+#### Stop your Cluster
+```
+$ cd multinodes
+$ vagrant halt
+```
+
+### Resume your Cluster
+```
+$ cd multinodes
+$ vagrant reload
+```
+
+#### Destroy your Cluster
 this operations terminates all VMs instances forming the cluster.
 
 ```
 $ cd multinodes
-$ ./vagrant destroy
+$ vagrant destroy
 ```
