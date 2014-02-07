@@ -61,13 +61,8 @@ Vagrant.configure("2") do |config|
         aws.tags = {
           Name: "vagrant-mesos-#{ninfo[:hostname]}"
         }
-
         if conf[:default_vpc] then
           aws.elastic_ip = true
-        end
-
-        if master?(ninfo[:hostname]) || slave?(ninfo[:hostname]) then
-          aws.user_data = File.read(File.join(base_dir,"scripts","aws_set_hostname.sh"))
         end
 
         override.ssh.username = "ubuntu"
@@ -76,6 +71,23 @@ Vagrant.configure("2") do |config|
         override.vm.provision :shell do |s|
           s.path = "scripts/populate_sshkey.sh"
           s.args = "/home/ubuntu ubuntu"
+        end
+
+        if master?(ninfo[:hostname]) || slave?(ninfo[:hostname]) then
+          override.vm.provision :shell , :inline => <<SCRIPT
+            PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
+            hostname $PUBLIC_DNS
+            echo $PUBLIC_DNS > /etc/hostname
+            HOSTNAME=$PUBLIC_DNS  # Fix the bash built-in hostname variable too
+SCRIPT
+        end
+
+        if master?(ninfo[:hostname]) then
+          override.vm.provision :shell , :inline => 'restart mesos-master'
+        end
+
+        if slave?(ninfo[:hostname]) then
+          override.vm.provision :shell , :inline => 'restart mesos-slave'
         end
       end
 
