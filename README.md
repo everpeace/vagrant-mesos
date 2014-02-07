@@ -1,5 +1,5 @@
-# vagrant-mesos: Spin up your [Mesos](http://mesos.apache.org) Cluster
-
+# vagrant-mesos
+Spin up your [Mesos](http://mesos.apache.org) Cluster with [Vagrant](http://www.vagrantup.com)!
 * Using VirtualBox
 	* [Mesos Standalone on VirtualBox](#svb)
 	* [Mesos Cluster on VirtualBox](#clvb)
