@@ -80,7 +80,7 @@ Vagrant.configure("2") do |config|
           chef.json  = {
             :mesos=> {
               :type         => "mesosphere",
-              :version      => "0.15.0-rc5",
+              :version      => conf[:mesos_version],
               :master_ips   => ninfos[:master].map { |m| "#{m[:ip]}" },
               :slave_ips    => ninfos[:slave].map { |s| "#{s[:ip]}" },
               :master       => if ninfos[:zk].length > 0 then
@@ -102,7 +102,7 @@ Vagrant.configure("2") do |config|
           chef.json = {
             :mesos => {
               :type         => "mesosphere",
-              :version      => "0.15.0-rc5",
+              :version      => conf[:mesos_version],
               :slave        => {
                 :master       => if ninfos[:zk].length > 0 then
                                    "zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos"
@@ -117,7 +117,7 @@ Vagrant.configure("2") do |config|
           chef.json = {
             :mesos => {
               :type         => "mesosphere",
-              :version      => "0.15.0-rc5",
+              :version      => conf[:mesos_version],
               :mesosphere   => {
                 :with_zookeeper => true
               }
