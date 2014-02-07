@@ -1,5 +1,3 @@
-<div style="background:#004561;margin-left:70%;padding-left:10px;padding-top:3px;color:#fff;width:125px;text-algin:right"><a href="http://mesos.apache.org"><img src="http://mesos.apache.org/assets/img/mesos_logo.png" height="50px"/></a></div>
-
 # vagrant-mesos: Spin up your [Mesos](http://mesos.apache.org) Cluster
 
 * Using VirtualBox
