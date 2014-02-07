@@ -64,7 +64,14 @@ Standalone Environment with EC2
    
    After box is up, you can see mesos web UI on: `http://#_public_dns_of_the_VM_#:5050` if everything went well. 
 
+	_Tips: you can get public dns of the vm by:_
 
+	```
+	$ vagrant ssh default -c 'echo http://`curl --silent http://169.254.169.254/latest/meta-data/public-hostname`:5050'
+	http://ec2-54-193-24-154.us-west-1.compute.amazonaws.com:5050
+	Connection to 54.193.24.154 closed.
+	```
+	
 Multinode environment with VirtualBox
 ----
 ### Cluster Configuration
@@ -166,9 +173,18 @@ $ vagrant up --provision aws (--no-parallel)
 
 After instances are all up, you can see mesos web UI on: `http://#_public_dns_of_the_master_N_#:5050` if everything went well. 
 
-__CAUTION__: due to [MESOS-672](https://issues.apache.org/jira/browse/MESOS-672), mesos web ui fails redirection to the present leader of mesos master.  So, you need to access each master web ui manually (you can find public dns name for masters on amazon aws console).
+_Tips: you can get public dns of the vms by:_
 
-If you wanted to make sure that the specific mastar(e.g. `master1e`) could be an initial leader, you can cotrol the order of spinning up vm like below.
+```
+$ vagrant ssh master1 -c 'echo http://`curl --silent http://169.254.169.254/latest/meta-data/public-hostname`:5050'
+http://ec2-54-193-24-154.us-west-1.compute.amazonaws.com:5050
+Connection to 54.193.24.154 closed.
+```
+
+
+___CAUTION___: due to [MESOS-672](https://issues.apache.org/jira/browse/MESOS-672), mesos web ui fails redirection to the present leader of mesos master.  So, you need to access each master web ui manually (you can find public dns name for masters on amazon aws console).
+
+If you wanted to make sure that the specific mastar(e.g. `master1`) could be an initial leader, you can cotrol the order of spinning up vm like below.
 
 ```
 $ cd multinode
