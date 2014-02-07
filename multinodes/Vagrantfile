@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 require 'yaml'
 require './lib/gen_node_infos'
+require './lib/predicates'
 
 base_dir = File.expand_path(File.dirname(__FILE__))
 conf = YAML.load_file(File.join(base_dir, "cluster.yml"))
@@ -72,7 +73,7 @@ Vagrant.configure("2") do |config|
           s.args = "/home/ubuntu ubuntu"
         end
 
-        if /master[0-9]+/ =~ ninfo[:hostname] || /slave[0-9]+/ =~ ninfo[:hostname] then
+        if master?(ninfo[:hostname]) || slave?(ninfo[:hostname]) then
           override.vm.provision :shell , :inline => <<SCRIPT
             PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
             hostname $PUBLIC_DNS
@@ -81,11 +82,11 @@ Vagrant.configure("2") do |config|
 SCRIPT
         end
 
-        if /master[0-9]+/ =~ ninfo[:hostname] then
+        if master?(ninfo[:hostname]) then
           override.vm.provision :shell , :inline => 'restart mesos-master'
         end
 
-        if /slave[0-9]+/ =~ ninfo[:hostname] then
+        if slave?(ninfo[:hostname]) then
           override.vm.provision :shell , :inline => 'restart mesos-slave'
         end
       end
@@ -95,7 +96,7 @@ SCRIPT
         chef.add_recipe "apt"
         chef.add_recipe "mesos"
 
-        if /master[0-9]+/ =~ ninfo[:hostname] then
+        if master?(ninfo[:hostname]) then
           chef.add_recipe "mesos::master"
           chef.json  = {
             :mesos=> {
@@ -117,7 +118,7 @@ SCRIPT
               end
             }
           }
-        elsif /slave[0-9]+/ =~ ninfo[:hostname] then
+        elsif slave?(ninfo[:hostname]) then
           chef.add_recipe "mesos::slave"
           chef.json = {
             :mesos => {
@@ -133,7 +134,7 @@ SCRIPT
               }
             }
           }
-        elsif /zk[0-9]+/ =~ ninfo[:hostname] then
+        elsif zk?(ninfo[:hostname]) then
           chef.json = {
             :mesos => {
               :type         => "mesosphere",
@@ -146,7 +147,7 @@ SCRIPT
         end
       end
 
-      if /zk[0-9]+/ =~ ninfo[:hostname] then
+      if zk?(ninfo[:hostname]) then
         myid = (/zk([0-9]+)/.match ninfo[:hostname])[1]
         cfg.vm.provision :shell, :inline => <<SCRIPT
           sudo mkdir -p /tmp/zookeeper
