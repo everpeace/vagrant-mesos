@@ -67,9 +67,8 @@ Standalone Environment with EC2
 	_Tips: you can get public dns of the vm by:_
 
 	```
-	$ vagrant ssh default -c 'echo http://`curl --silent http://169.254.169.254/latest/meta-data/public-hostname`:5050'
+	$ vagrant ssh --'echo http://`curl --silent http://169.254.169.254/latest/meta-data/public-hostname`:5050'
 	http://ec2-54-193-24-154.us-west-1.compute.amazonaws.com:5050
-	Connection to 54.193.24.154 closed.
 	```
 
 Multinode environment with VirtualBox
@@ -176,9 +175,8 @@ After instances are all up, you can see mesos web UI on: `http://#_public_dns_of
 _Tips: you can get public dns of the vms by:_
 
 ```
-$ vagrant ssh master1 -c 'echo http://`curl --silent http://169.254.169.254/latest/meta-data/public-hostname`:5050'
+$ vagrant ssh master1 -- 'echo http://`curl --silent http://169.254.169.254/latest/meta-data/public-hostname`:5050'
 http://ec2-54-193-24-154.us-west-1.compute.amazonaws.com:5050
-Connection to 54.193.24.154 closed.
 ```
 
 
