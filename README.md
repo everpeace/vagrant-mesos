@@ -113,12 +113,7 @@ $ cd multinodes
 $ ./vagrant up
 ```
 
-mesos master listen on port 5050 on (virtual private IP). So, by normal virtual box NAT setting, host os can't connect to mesos master. To connect mesos master, you can use ssh port forwarding like this.
-
-```
-$ vagrant ssh master1 -- -L15050:master1:5050
-```
-Then, you can connect mesos web ui on <http://localhost:15050>
+At default seeting, after all the boxes are up, you can see mesos web UI on: <http://172.31.1.11:5050> if everything went well.
 
 #### Destroy a Cluster
 this operations all VM instances forming the cluster.
