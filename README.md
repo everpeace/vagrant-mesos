@@ -82,7 +82,7 @@ Cluster configuration is defined at `cluster.yml`.  You can edit the file to con
 
 ```
 # Mesos cluster configurations
-mesos_version: 0.14.2
+mesos_version: 0.15.0
 
 # The numbers of servers
 ##############################
