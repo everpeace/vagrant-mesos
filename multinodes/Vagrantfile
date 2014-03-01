@@ -160,4 +160,84 @@ SCRIPT
       end
     end
   end
+
+  if conf["marathon_enable"] then
+    config.vm.define :marathon do |cfg|
+      cfg.vm.provider :virtualbox do |vb, override|
+        override.vm.box = "Official Ubuntu 13.04 daily Cloud Image amd64 (No Guest Additions)"
+        override.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/raring/current/raring-server-cloudimg-amd64-vagrant-disk1.box"
+
+        override.vm.hostname = "marathon"
+        override.vm.network :private_network, :ip => conf["marathon_ipbase"]+"11"
+        override.vm.provision :hosts
+
+        vb.name = 'vagrant-mesos-' + "marathon"
+        vb.customize ["modifyvm", :id, "--memory", conf["marathon_mem"], "--cpus", conf["marathon_cpus"] ]
+
+        override.vm.provision :shell do |s|
+          s.path = "scripts/populate_sshkey.sh"
+          s.args = "/root root"
+        end
+
+        override.vm.provision :shell do |s|
+          s.path = "scripts/populate_sshkey.sh"
+          s.args = "/home/vagrant vagrant"
+        end
+      end
+      cfg.vm.provider :aws do |aws, override|
+        override.vm.box = "dummy"
+        override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+
+        aws.access_key_id = conf["access_key_id"]
+        aws.secret_access_key = conf["secret_access_key"]
+
+        aws.region = conf["region"]
+        aws.ami = ami[conf["region"]]
+        aws.instance_type = conf["marathon_instance_type"]
+        aws.keypair_name = conf["keypair_name"]
+        aws.subnet_id = conf["subnet_id"]
+        aws.security_groups = conf["security_groups"]
+        aws.private_ip_address = conf["marathon_ipbase"]+"11"
+        aws.tags = {
+          Name: "vagrant-mesos-marathon"
+        }
+        if conf[:default_vpc] then
+          aws.elastic_ip = true
+        end
+
+        override.ssh.username = "ubuntu"
+        override.ssh.private_key_path = conf["ssh_private_key_path"]
+
+        override.vm.provision :shell do |s|
+          s.path = "scripts/populate_sshkey.sh"
+          s.args = "/home/ubuntu ubuntu"
+        end
+
+        override.vm.provision :shell , :inline => <<SCRIPT
+          PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
+          hostname $PUBLIC_DNS
+          echo $PUBLIC_DNS > /etc/hostname
+          HOSTNAME=$PUBLIC_DNS  # Fix the bash built-in hostname variable too
+SCRIPT
+      end
+
+      cfg.vm.provision :chef_solo do |chef|
+        chef.add_recipe "apt"
+        chef.add_recipe "mesos"
+        chef.json = {
+          :mesos => {
+            :type         => "mesosphere",
+            :version      => conf[:mesos_version]
+          }
+        }
+      end
+
+      cfg.vm.provision :shell, :inline => <<SCRIPT
+        apt-get -y install default-jre-headless unzip curl libcurl3
+        curl -sSfL http://downloads.mesosphere.io/marathon/marathon-0.4.0.tgz --output /tmp/marathon.tgz
+        mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
+        nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")} > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
+SCRIPT
+    end
+  end
 end

@@ -16,9 +16,10 @@ Vagrant.configure("2") do |config|
     override.vm.box = "Official Ubuntu 13.04 daily Cloud Image amd64 (No Guest Additions)"
     override.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/raring/current/raring-server-cloudimg-amd64-vagrant-disk1.box"
     vb.name = 'vagrant-mesos-standalone'
+
     # Use VBoxManage to customize the VM. For example to change memory:
     vb.customize ["modifyvm", :id, "--memory", "#{1024*2}"]
-    # vb.customize ["modifyvm", :id,  "--cpus",  "2"]
+    vb.customize ["modifyvm", :id,  "--cpus",  "2"]
 
     # please customize hostname and private ip configuration if you needed.
     override.vm.hostname = "mesos"
@@ -56,7 +57,7 @@ Vagrant.configure("2") do |config|
     aws.tags = {
       Name: 'vagrant-mesos-standalone'
     }
- 
+
     override.ssh.username = "ubuntu"
     override.ssh.private_key_path = conf["ssh_private_key_path"]
     override.vm.provision :shell do |s|
@@ -92,5 +93,12 @@ Vagrant.configure("2") do |config|
       }
     }
   end
+
+  config.vm.provision :shell, :inline => <<SCRIPT
+        apt-get -y install default-jre-headless unzip curl libcurl3
+        curl -sSfL http://downloads.mesosphere.io/marathon/marathon-0.4.0.tgz --output /tmp/marathon.tgz
+        mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
+        nohup /opt/marathon/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
+SCRIPT
 
 end

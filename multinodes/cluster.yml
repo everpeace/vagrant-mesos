@@ -24,7 +24,11 @@ zk_ipbase    : "172.31.0."
 master_ipbase: "172.31.1."
 slave_ipbase : "172.31.2."
 
-
+# experimental frameworks
+marathon_enable: true
+marathon_mem   : 512
+marathon_cpus  : 1
+marathon_ipbase: "172.31.3."
 
 # EC2 Configurations
 # please choose one region from
@@ -47,3 +51,4 @@ region: EDIT_HERE
 zk_instance_type: m1.small
 master_instance_type: m1.small
 slave_instance_type: m1.small
+marathon_instance_type: m1.small

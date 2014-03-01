@@ -33,7 +33,12 @@ It's so simple!
     $ cd standalone
     $ vagrant up
 
-After box is up, you can see mesos web UI on: <http://localhost:5050> if everything went well.
+After box is up, you can see
+
+* mesos web UI on: <http://192.168.33.10:5050>
+* [marathon](https://github.com/mesosphere/marathon) web UI on: <http://192.168.33.10:8080>
+
+if everything went well.
 
 <a name="sec2"></a>
 Mesos Standalone on EC2
@@ -65,7 +70,12 @@ Mesos Standalone on EC2
         cd standalone
         vagrant up --provider aws
 
-   After box is up, you can see mesos web UI on: `http://#_public_dns_of_the_VM_#:5050` if everything went well.
+   After box is up, you can see
+
+   * mesos web UI on: `http://#_public_dns_of_the_VM_#:5050`
+   * [marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_the_VM_#:8080`
+
+   if everything went well.
 
 	_Tips: you can get public dns of the vm by:_
 
@@ -87,8 +97,8 @@ mesos_version: 0.15.0
 # The numbers of servers
 ##############################
 zk_n: 1          # hostname will be zk1, zk2, …
-master_n: 2      # hostname will be master1,master2,…
-slave_n : 2      # hostname will be slave1,slave2,…
+master_n: 1      # hostname will be master1,master2,…
+slave_n : 1      # hostname will be slave1,slave2,…
 
 # Memory and Cpus setting(only for virtualbox)
 ##########################################
@@ -116,7 +126,12 @@ $ cd multinodes
 $ ./vagrant up
 ```
 
-At default seeting, after all the boxes are up, you can see mesos web UI on: <http://172.31.1.11:5050> if everything went well.
+At default seeting, after all the boxes are up, you can see
+
+* mesos web UI on: <http://172.31.1.11:5050>
+* [marathon](https://github.com/mesosphere/marathon) web UI on: <http://172.31.3.11:8080>
+
+if everything went well.
 
 #### Destroy a Cluster
 this operations all VM instances forming the cluster.
@@ -173,7 +188,12 @@ $ cd multinode
 $ vagrant up --provision aws (--no-parallel)
 ```
 
-After instances are all up, you can see mesos web UI on: `http://#_public_dns_of_the_master_N_#:5050` if everything went well.
+After instances are all up, you can see
+
+* mesos web UI on: `http://#_public_dns_of_the_master_N_#:5050`
+* [marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_marathon_#:8080`
+
+if everything went well.
 
 _Tips: you can get public dns of the vms by:_
 
@@ -189,16 +209,16 @@ If you wanted to make sure that the specific mastar(e.g. `master1`) could be an 
 
 ```
 $ cd multinode
-# firtsly, you spin up an zookeeper ensemble
+# spin up an zookeeper ensemble
 $ vagrant up --provider aws /zk/
 
-# second, you spin up master1. master1 will be an initial leader
+# spin up master1. master1 will be an initial leader
 $ vagrant up --provider aws master1
 
-# you up remained masters
+# spin up remained masters
 $ vagrant up --provider aws /master[2-9]/
 
-# you spin up slaves
+# spin up slaves
 $ vagrant up --provider aws /slave/
 ```
 

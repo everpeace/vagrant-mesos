@@ -2,12 +2,13 @@
 access_key_id:  EDIT_HERE
 secret_access_key: EDIT_HERE
 
-# please choose one from 
-# ["ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1", "us-east-1", 
+# please choose one from
+# ["ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1", "us-east-1",
 #  "us-west-1", "ap-southeast-2", "us-west-2"]
 region: us-east-1
 
 # array of security groups. e.g. ['sg*** ']
+# please make sure to open ports 22(SSH), 5050(Mesos), 8080(Marathon)
 security_groups: EDIT_HERE
 
 # see http://aws.amazon.com/ec2/instance-types/#selecting-instance-types
