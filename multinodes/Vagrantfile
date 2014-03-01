@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
         override.vm.provision :hosts
 
         vb.name = 'vagrant-mesos-' + ninfo[:hostname]
-        vb.customize ["modifyvm", :id, "--memory", ninfo[:mem] ]
+        vb.customize ["modifyvm", :id, "--memory", ninfo[:mem], "--cpus", ninfo[:cpus] ]
 
         override.vm.provision :shell do |s|
           s.path = "scripts/populate_sshkey.sh"

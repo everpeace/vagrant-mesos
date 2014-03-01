@@ -90,11 +90,14 @@ zk_n: 1          # hostname will be zk1, zk2, …
 master_n: 2      # hostname will be master1,master2,…
 slave_n : 2      # hostname will be slave1,slave2,…
 
-# Memory setting(only for virtualbox)
+# Memory and Cpus setting(only for virtualbox)
 ##########################################
-zk_mem    : 256
-master_mem: 256
-slave_mem : 256
+zk_mem     : 256
+zk_cpus    : 1
+master_mem : 256
+master_cpus: 1
+slave_mem  : 512
+slave_cpus : 2
 
 # private ip bases
 # When ec2, this should be matched with
