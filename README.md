@@ -11,7 +11,8 @@ The mesos installation is provided by mesos chef cookbook.  Please see [everpeac
 
 Prerequisites
 ----
-* vagrant 1.2+: <http://www.vagrantup.com/>
+* vagrant 1.2+ and &lt;1.5: <http://www.vagrantup.com/>
+    * vagrant-berkshelf plugin is not compatible to vagrant 1.5. see [the issue](https://github.com/berkshelf/vagrant-berkshelf/issues/156) 
 * VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
 * vagrant plugins
     * [vagrant-omnibus](https://github.com/schisamo/vagrant-omnibus)
