@@ -2,6 +2,8 @@
 # vi: set ft=ruby :
 # vagrant plugins required:
 # vagrant-berkshelf, vagrant-omnibus, vagrant-hosts
+require 'yaml'
+
 Vagrant.configure("2") do |config|
 
   # enable plugins
