@@ -119,7 +119,11 @@ SCRIPT
             }
           }
         elsif slave?(ninfo[:hostname]) then
+          chef.add_recipe "docker::aufs"
+          chef.add_recipe "docker::lxc"
+          chef.add_recipe "docker"
           chef.add_recipe "mesos::slave"
+          chef.add_recipe "mesos::docker-executor"
           chef.json = {
             :mesos => {
               :type         => "mesosphere",
@@ -130,7 +134,8 @@ SCRIPT
                                  else
                                    "#{ninfos[:master][0][:ip]}:5050"
                                  end,
-                :ip           => "#{ninfo[:ip]}"
+                :ip           => "#{ninfo[:ip]}",
+                :isolation    => "process"
               }
             }
           }
@@ -234,8 +239,11 @@ SCRIPT
 
       cfg.vm.provision :shell, :inline => <<SCRIPT
         apt-get -y install default-jre-headless unzip curl libcurl3
-        curl -sSfL http://downloads.mesosphere.io/marathon/marathon-0.4.0.tgz --output /tmp/marathon.tgz
-        mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
+        if [ ! -e /tmp/marathon.tgz ]; then
+          curl -sSfL http://downloads.mesosphere.io/marathon/marathon-0.4.1.tgz --output /tmp/marathon.tgz
+          mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
+        fi
+        kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
         nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")} > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
 SCRIPT
     end
