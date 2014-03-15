@@ -186,8 +186,10 @@ After editting configuration is done, you can just hit regular command.
 
 ```
 $ cd multinode
-$ vagrant up --provider=aws (--no-parallel)
+$ vagrant up --provider=aws --no-parallel
 ```
+
+_NOTE: `--no-parallel` is highly recommended because vagrant-berkshelf plugin is prone to failure in parallel provisioning._
 
 After instances are all up, you can see
 
