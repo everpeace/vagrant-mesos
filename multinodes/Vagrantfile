@@ -174,7 +174,7 @@ SCRIPT
 
         override.vm.hostname = "marathon"
         override.vm.network :private_network, :ip => conf["marathon_ipbase"]+"11"
-        override.vm.provision :hosts
+#        override.vm.provision :hosts
 
         vb.name = 'vagrant-mesos-' + "marathon"
         vb.customize ["modifyvm", :id, "--memory", conf["marathon_mem"], "--cpus", conf["marathon_cpus"] ]
