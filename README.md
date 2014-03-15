@@ -12,7 +12,7 @@ The mesos installation is provided by mesos chef cookbook.  Please see [everpeac
 Prerequisites
 ----
 * vagrant 1.2+ and &lt;1.5: <http://www.vagrantup.com/>
-    * vagrant-berkshelf plugin is not compatible to vagrant 1.5. see [the issue](https://github.com/berkshelf/vagrant-berkshelf/issues/156) 
+    * vagrant-berkshelf plugin is not compatible to vagrant 1.5. see [the issue](https://github.com/berkshelf/vagrant-berkshelf/issues/156)
 * VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
 * vagrant plugins
     * [vagrant-omnibus](https://github.com/schisamo/vagrant-omnibus)
@@ -69,7 +69,7 @@ Mesos Standalone on EC2
 2. you can spin up mesos box on ec2 by the same way with the case of virtual box
 
         cd standalone
-        vagrant up --provider aws
+        vagrant up --provider=aws
 
    After box is up, you can see
 
@@ -186,7 +186,7 @@ After editting configuration is done, you can just hit regular command.
 
 ```
 $ cd multinode
-$ vagrant up --provision aws (--no-parallel)
+$ vagrant up --provider=aws (--no-parallel)
 ```
 
 After instances are all up, you can see
@@ -211,16 +211,16 @@ If you wanted to make sure that the specific mastar(e.g. `master1`) could be an 
 ```
 $ cd multinode
 # spin up an zookeeper ensemble
-$ vagrant up --provider aws /zk/
+$ vagrant up --provider=aws /zk/
 
 # spin up master1. master1 will be an initial leader
-$ vagrant up --provider aws master1
+$ vagrant up --provider=aws master1
 
 # spin up remained masters
-$ vagrant up --provider aws /master[2-9]/
+$ vagrant up --provider=aws /master[2-9]/
 
 # spin up slaves
-$ vagrant up --provider aws /slave/
+$ vagrant up --provider=aws /slave/
 ```
 
 #### Stop your Cluster
