@@ -1,5 +1,7 @@
 # vagrant-mesos
-Spin up your [Mesos](http://mesos.apache.org) Cluster + [Marathon](https://github.com/mesosphere/marathon) with [Vagrant](http://www.vagrantup.com)!
+Spin up your [Mesos](http://mesos.apache.org) Cluster with [Vagrant](http://www.vagrantup.com)!
+
+This also spins up [Marathon](https://github.com/mesosphere/marathon) and installs [mesos-docker](http://mesosphere.io/2013/09/26/docker-on-mesos/) executor to each `mesos-slave`. This means you can build yoru own private PaaS with `vagrant up`!!
 
 * Using VirtualBox
 	* [Mesos Standalone on VirtualBox](#svb)
