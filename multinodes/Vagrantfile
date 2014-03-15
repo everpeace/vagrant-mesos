@@ -244,7 +244,7 @@ SCRIPT
           mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
         fi
         kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")} > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
+        nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
 SCRIPT
     end
   end
