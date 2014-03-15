@@ -74,6 +74,10 @@ Vagrant.configure("2") do |config|
     chef.add_recipe "mesos"
     chef.add_recipe "mesos::master"
     chef.add_recipe "mesos::slave"
+    chef.add_recipe "docker::aufs"
+    chef.add_recipe "docker::lxc"
+    chef.add_recipe "docker"
+    chef.add_recipe "mesos::docker-executor"
 
     # You may also specify custom JSON attributes:
     chef.json = {
@@ -91,6 +95,7 @@ Vagrant.configure("2") do |config|
         },
         :slave =>{
           :master => "zk://localhost:2181/mesos",
+          :isolation => "process"
         }
       }
     }
@@ -98,8 +103,11 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision :shell, :inline => <<SCRIPT
         apt-get -y install default-jre-headless unzip curl libcurl3
-        curl -sSfL http://downloads.mesosphere.io/marathon/marathon-0.4.0.tgz --output /tmp/marathon.tgz
-        mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
+        if [ ! -e /tmp/marathon.tgz ]; then
+          curl -sSfL http://downloads.mesosphere.io/marathon/marathon-0.4.1.tgz --output /tmp/marathon.tgz
+          mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
+        fi
+        kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
         nohup /opt/marathon/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
 SCRIPT
 
