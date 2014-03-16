@@ -1,7 +1,7 @@
 # vagrant-mesos
 Spin up your [Mesos](http://mesos.apache.org) Cluster with [Vagrant](http://www.vagrantup.com)!
 
-This also spins up [Marathon](https://github.com/mesosphere/marathon) and installs [mesos-docker](http://mesosphere.io/2013/09/26/docker-on-mesos/) executor to each `mesos-slave`. This means you can build yoru own private PaaS with `vagrant up`!!
+This also spins up [Marathon](https://github.com/mesosphere/marathon) and installs [mesos-docker](http://mesosphere.io/2013/09/26/docker-on-mesos/) executor to each `mesos-slave`. This means you can build your own private PaaS with `vagrant up`!!
 
 * Using VirtualBox
 	* [Mesos Standalone on VirtualBox](#svb)
@@ -10,7 +10,7 @@ This also spins up [Marathon](https://github.com/mesosphere/marathon) and instal
 	* [Mesos Standalone on EC2](#sec2)
 	* [Mesos Cluster on EC2 (VPC)](#clec2)
 
-The mesos installation is provided by mesos chef cookbook.  Please see [everpeace/cookbook-mesos](http://github.com/everpeace/cookbook-mesos).
+The mesos installation is powered by mesos chef cookbook.  Please see [everpeace/cookbook-mesos](http://github.com/everpeace/cookbook-mesos).
 
 Prerequisites
 ----
@@ -47,7 +47,7 @@ if everything went well.
 <a name="sec2"></a>
 Mesos Standalone on EC2
 ----
-1. configure ec2 credentials and some settings defined in `standalone/aws_config.yml`. You have to fill up `EDIT_HERE` parts.  Security group you'll set must accept at least tcp port 22(SSH) and 5050(mesos-master web ui) from outside of ec2.
+1. set ec2 credentials and some configurations defined in `standalone/aws_config.yml`. You have to fill up `EDIT_HERE` parts.  Security group you'll set must accept at least tcp port 22(SSH) and 5050(mesos-master web ui) from outside of ec2.
 
 		# Please set AWS credentials
 		access_key_id:  EDIT_HERE
@@ -92,7 +92,7 @@ Mesos Standalone on EC2
 Mesos Cluster on VirtualBox
 ----
 ### Cluster Configuration
-Cluster configuration is defined at `cluster.yml`.  You can edit the file to congigure cluster configurations.
+Cluster configuration is defined at `multinodes/cluster.yml`.  You can edit the file to congigure cluster settings.
 
 ```
 # Mesos cluster configurations
@@ -122,7 +122,7 @@ master_ipbase: "172.31.1."
 slave_ipbase : "172.31.2."
 ```
 
-### Launch a Cluster
+### Launch Cluster
 This takes several minutes(10 to 20 min.).  It's time to go grabbing some coffee.
 
 ```
@@ -130,14 +130,14 @@ $ cd multinodes
 $ ./vagrant up
 ```
 
-At default seeting, after all the boxes are up, you can see
+At default setting, after all the boxes are up, you can see
 
 * mesos web UI on: <http://172.31.1.11:5050>
 * [marathon](https://github.com/mesosphere/marathon) web UI on: <http://172.31.3.11:8080>
 
 if everything went well.
 
-#### Destroy a Cluster
+#### Destroy Cluster
 this operations all VM instances forming the cluster.
 
 ```
@@ -148,16 +148,16 @@ $ ./vagrant destroy
 <a name="clec2"></a>
 Mesos Cluster on EC2 (VPC)
 ----
-Because we require to assign private IP addreses to VM instances, this Vagrantfile uses Amazon VPC (you'll have to set subnet_id and security grooups both associated to the same VPC instance).
+Because we assign private IP addreses to VM instances, this Vagrantfile requires Amazon VPC (you'll have to set subnet_id and security grooups both of which associates to the same VPC instance).
 
-_Note: Using default VPC is highly recommended.  If you used non-default vpc, you should make sure that limit of the elastic ips is no less than (zk_n + master_n + slave_n).  The limit default is 5._
+_Note: Using default VPC is highly recommended.  If you used non-default vpc, you should make sure that limit of the elastic ips is no less than (zk&#95;n + master&#95;n + slave&#95;n).  The limit default is 5._
 
 ### Cluster Configuration
-You have to configure some additional stuff on `cluster.yml` related to EC2.  Please note that
+You have to configure some additional stuffs in `multinodes/cluster.yml` which are related to EC2.  Please note that
 
-* subnet_id should be a VPC subnet
-* security groups should be ones associated to the VPC instance.
-	* security groups should allow accesses to ports 22(SSH), 2181(zookeeper) and 5050--(mesos).
+* `subnet_id` should be a VPC subnet
+* `security_groups` should be ones associated to the VPC instance.
+	* `security_groups` should allow accesses to ports 22(SSH), 2181(zookeeper) and 5050--(mesos).
 
 ```
 (cont.)
@@ -184,7 +184,7 @@ master_instance_type: m1.small
 slave_instance_type: m1.small
 ```
 
-### Launch a Cluster
+### Launch Cluster
 After editting configuration is done, you can just hit regular command.
 
 ```
@@ -209,9 +209,9 @@ http://ec2-54-193-24-154.us-west-1.compute.amazonaws.com:5050
 ```
 
 
-___CAUTION___: due to [MESOS-672](https://issues.apache.org/jira/browse/MESOS-672), mesos web ui fails redirection to the present leader of mesos master.  So, you would need to access each master web ui manually to find the leader.
+___CAUTION___: due to [MESOS-672](https://issues.apache.org/jira/browse/MESOS-672), mesos web ui fails redirection to the present leader of mesos master.  So, you would need to access each master web ui manually to find the leader.  The issue will be fixed on 0.18.0 release.
 
-If you wanted to make sure that the specific mastar(e.g. `master1`) could be an initial leader, you can cotrol the order of spinning up vm like below.
+If you wanted to make sure that the specific mastar(e.g. `master1`) could be an initial leader, you can cotrol the order of spinning up VMs like below.
 
 ```
 $ cd multinode
@@ -226,6 +226,9 @@ $ vagrant up --provider=aws /master[2-9]/
 
 # spin up slaves
 $ vagrant up --provider=aws /slave/
+
+# spin up marathon
+$ vagrant up --provider=aws marathon
 ```
 
 #### Stop your Cluster
