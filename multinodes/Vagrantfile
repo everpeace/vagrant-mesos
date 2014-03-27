@@ -168,13 +168,14 @@ SCRIPT
 
   if conf["marathon_enable"] then
     config.vm.define :marathon do |cfg|
+      marathon_ip = conf["marathon_ipbase"]+"11"
       cfg.vm.provider :virtualbox do |vb, override|
         override.vm.box = "Official Ubuntu 13.04 daily Cloud Image amd64 (No Guest Additions)"
         override.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/raring/current/raring-server-cloudimg-amd64-vagrant-disk1.box"
 
         override.vm.hostname = "marathon"
-        override.vm.network :private_network, :ip => conf["marathon_ipbase"]+"11"
-#        override.vm.provision :hosts
+        override.vm.network :private_network, :ip => marathon_ip
+        override.vm.provision :hosts
 
         vb.name = 'vagrant-mesos-' + "marathon"
         vb.customize ["modifyvm", :id, "--memory", conf["marathon_mem"], "--cpus", conf["marathon_cpus"] ]
@@ -202,7 +203,7 @@ SCRIPT
         aws.keypair_name = conf["keypair_name"]
         aws.subnet_id = conf["subnet_id"]
         aws.security_groups = conf["security_groups"]
-        aws.private_ip_address = conf["marathon_ipbase"]+"11"
+        aws.private_ip_address = marathon_ip
         aws.tags = {
           Name: "vagrant-mesos-marathon"
         }
@@ -244,7 +245,7 @@ SCRIPT
           mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
         fi
         kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
+        LIBPROCESS_IP=#{marathon_ip} nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
 SCRIPT
     end
   end
