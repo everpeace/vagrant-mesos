@@ -208,9 +208,6 @@ $ vagrant ssh master1 -- 'echo http://`curl --silent http://169.254.169.254/late
 http://ec2-54-193-24-154.us-west-1.compute.amazonaws.com:5050
 ```
 
-
-___CAUTION___: due to [MESOS-672](https://issues.apache.org/jira/browse/MESOS-672), mesos web ui fails redirection to the present leader of mesos master.  So, you would need to access each master web ui manually to find the leader.  The issue will be fixed on 0.18.0 release.
-
 If you wanted to make sure that the specific mastar(e.g. `master1`) could be an initial leader, you can cotrol the order of spinning up VMs like below.
 
 ```
