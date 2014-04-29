@@ -14,6 +14,37 @@ Vagrant.configure("2") do |config|
   # please activate below.
   config.cache.auto_detect = true
 
+
+  config.vm.provider :vmware_fusion do |fusion,override|
+   override.vm.box     = "precise64_vmware_fusion"
+   override.vm.box_url = "http://files.vagrantup.com/precise64_vmware_fusion.box"
+        
+   fusion.name = 'vagrant-mesos-standalone'
+   fusion.vmx["memsize"] = "4096"
+   fusion.vmx["numvcpus"] = "2"
+        
+   override.vm.hostname = "mesos"
+   private_ip = "192.168.33.10"
+   override.vm.network :private_network, ip: private_ip
+   
+   override.vm.provision :hosts do |provisioner|
+      provisioner.add_host private_ip , [ config.vm.hostname ]
+   end
+
+   # for mesos web UI.
+   override.vm.network :forwarded_port, guest: 5050, host: 5050
+
+   # for Marathon Web UI
+   override.vm.network :forwarded_port, guest: 8080, host: 8080
+
+   override.vm.provision :shell do |s|
+      s.path = "scripts/populate_sshkey.sh"
+      s.args = "/home/vagrant vagrant"
+   end
+
+end
+
+###########################################################
   config.vm.provider :virtualbox do |vb, override|
     override.vm.box = "Official Ubuntu 13.04 daily Cloud Image amd64 (No Guest Additions)"
     override.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/raring/current/raring-server-cloudimg-amd64-vagrant-disk1.box"
@@ -42,31 +73,9 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  ami = YAML.load_file('scripts/aws_region_ami.yaml')
-  conf = YAML.load_file('aws_config.yaml')
-  config.vm.provider :aws do |aws, override|
-    override.vm.box = "dummy"
-    override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+#################################################
 
-    aws.access_key_id = conf["access_key_id"]
-    aws.secret_access_key = conf["secret_access_key"]
 
-    aws.region = conf["region"]
-    aws.ami = ami[conf["region"]]
-    aws.instance_type = conf["instance_type"]
-    aws.keypair_name = conf["keypair_name"]
-    aws.security_groups = conf["security_groups"]
-    aws.tags = {
-      Name: 'vagrant-mesos-standalone'
-    }
-
-    override.ssh.username = "ubuntu"
-    override.ssh.private_key_path = conf["ssh_private_key_path"]
-    override.vm.provision :shell do |s|
-      s.path = "scripts/populate_sshkey.sh"
-      s.args = "/home/ubuntu ubuntu"
-    end
-  end
 
   config.vm.provision :chef_solo do |chef|
     # chef.log_level = :debug
