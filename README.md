@@ -1,7 +1,7 @@
 # vagrant-mesos
 Spin up your [Mesos](http://mesos.apache.org) Cluster with [Vagrant](http://www.vagrantup.com)!
 
-This also spins up [Marathon](https://github.com/mesosphere/marathon) server node and installs [mesos-docker](http://mesosphere.io/2013/09/26/docker-on-mesos/) executor to `/var/lib/mesos/executors/docker` of each mesos slave node. This means you can build your own private PaaS with `vagrant up`!! 
+This also spins up [Marathon](https://github.com/mesosphere/marathon) server node and installs [mesos-docker](http://mesosphere.io/2013/09/26/docker-on-mesos/) executor to `/var/lib/mesos/executors/docker` of each mesos slave node. This means you can build your own private PaaS with `vagrant up`!!
 
 * Using VirtualBox
 	* [Mesos Standalone on VirtualBox](#svb)
@@ -14,14 +14,16 @@ The mesos installation is powered by mesos chef cookbook.  Please see [everpeace
 
 Prerequisites
 ----
-* vagrant 1.2+ and &lt;1.5: <http://www.vagrantup.com/>
-    * vagrant-berkshelf plugin is not compatible to vagrant 1.5. see [the issue](https://github.com/berkshelf/vagrant-berkshelf/issues/156)
+* vagrant 1.2+: <http://www.vagrantup.com/>
 * VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
 * vagrant plugins
     * [vagrant-omnibus](https://github.com/schisamo/vagrant-omnibus)
           `$ vagrant plugin install vagrant-omnibus`
-    * [vagrant-berkshelf](https://github.com/RiotGames/vagrant-berkshelf)
+    * [vagrant-berkshelf](https://github.com/berkshelf/vagrant-berkshelf)
           `$ vagrant plugin install vagrant-berkshelf`
+
+		* if you use vagrant 1.5.2+, please install vagrant-berkshelf 2.0.1+
+		    `$ vagrant plugin install vagrant-berkshelf --plugin-version '>= 2.0.1'`
     * [vagrant-hosts](https://github.com/adrienthebo/vagrant-hosts)
           `$ vagrant plugin install vagrant-hosts`
     * [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)
