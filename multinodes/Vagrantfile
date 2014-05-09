@@ -37,9 +37,6 @@ Vagrant.configure("2") do |config|
         fusion.vmx["numvcpus"] = ninfo[:cpus]
 
       
-        override.vm.provision :hosts do |provisioner|
-          provisioner.add_host private_ip , [ config.vm.hostname ]
-        end
 
  
         override.vm.provision :shell do |s|
