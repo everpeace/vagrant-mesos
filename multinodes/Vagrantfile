@@ -198,6 +198,32 @@ SCRIPT
   if conf["marathon_enable"] then
     config.vm.define :marathon do |cfg|
       marathon_ip = conf["marathon_ipbase"]+"11"
+
+      config.vm.provider :vmware_fusion do |fusion,override|
+        override.vm.box     = "precise64_vmware_fusion"
+        override.vm.box_url = "http://files.vagrantup.com/precise64_vmware_fusion.box"
+
+        override.vm.hostname = "marathon"
+        override.vm.network :private_network, :ip => marathon_ip
+        override.vm.provision :hosts
+
+        fusion.name = 'vagrant-mesos-' + "marathon"
+#        fusion.customize ["modifyvm", :id, "--memory", ninfo[:mem], "--cpus", ninfo[:cpus] ]
+        fusion.vmx["memsize"] = conf["marathon_mem"]
+        fusion.vmx["numvcpus"] = conf["marathon_cpus"]
+
+        override.vm.provision :shell do |s|
+          s.path = "scripts/populate_sshkey.sh"
+          s.args = "/root root"
+        end
+
+         override.vm.provision :shell do |s|
+            s.path = "scripts/populate_sshkey.sh"
+            s.args = "/home/vagrant vagrant"
+         end
+      end
+
+
       cfg.vm.provider :virtualbox do |vb, override|
         override.vm.box = "Official Ubuntu 13.04 daily Cloud Image amd64 (No Guest Additions)"
         override.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/raring/current/raring-server-cloudimg-amd64-vagrant-disk1.box"
