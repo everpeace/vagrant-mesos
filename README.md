@@ -9,9 +9,9 @@ This also spins up [Marathon](https://github.com/mesosphere/marathon) server nod
 * Using Amazon EC2
 	* [Mesos Standalone on EC2](#sec2)
 	* [Mesos Cluster on EC2 (VPC)](#clec2)
-* Using VmWare Fusion
-	* [Mesos Standalone on EC2](#svb)
-
+* Using VMware Fusion
+	* [Mesos Standalone on VMware Fusion](#svb)
+	* [Mesos Cluster on VMware Fusion](#clvb)
 
 The mesos installation is powered by mesos chef cookbook.  Please see [everpeace/cookbook-mesos](http://github.com/everpeace/cookbook-mesos).
 
@@ -38,12 +38,13 @@ Prerequisites
     	   `$ vagrant plugin install vagrant-aws`
 
 <a name="svb"></a>
-Mesos Standalone on VirtualBox and VMware Fusion
+Mesos Standalone on VirtualBox or VMware Fusion
 ----
 It's so simple!
 
     $ cd standalone
-    $ vagrant up
+    $ vagrant up                            ## virtual box
+    $ vagrant up --provider=vmware_fusion   ## for VMWare Fusion
 
 After box is up, you can see
 
@@ -97,7 +98,7 @@ Mesos Standalone on EC2
 	```
 
 <a name="clvb"></a>
-Mesos Cluster on VirtualBox
+Mesos Cluster on VirtualBox or VMWare Fusion
 ----
 ### Cluster Configuration
 Cluster configuration is defined at `multinodes/cluster.yml`.  You can edit the file to congigure cluster settings.
@@ -135,7 +136,8 @@ This takes several minutes(10 to 20 min.).  It's time to go grabbing some coffee
 
 ```
 $ cd multinodes
-$ ./vagrant up
+$ vagrant up                           # for VirtualBox
+$ vagrant up --provider=vmware_fusion  # for VMWare Fusion
 ```
 
 At default setting, after all the boxes are up, you can see
@@ -150,7 +152,7 @@ this operations all VM instances forming the cluster.
 
 ```
 $ cd multinodes
-$ ./vagrant destroy
+$ vagrant destroy
 ```
 
 <a name="clec2"></a>

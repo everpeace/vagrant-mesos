@@ -36,9 +36,6 @@ Vagrant.configure("2") do |config|
         fusion.vmx["memsize"] = ninfo[:mem]
         fusion.vmx["numvcpus"] = ninfo[:cpus]
 
-      
-
- 
         override.vm.provision :shell do |s|
           s.path = "scripts/populate_sshkey.sh"
           s.args = "/root root"
@@ -72,6 +69,7 @@ Vagrant.configure("2") do |config|
           s.args = "/home/vagrant vagrant"
         end
       end
+
 
       cfg.vm.provider :aws do |aws, override|
         override.vm.box = "dummy"
@@ -245,6 +243,8 @@ SCRIPT
           s.args = "/home/vagrant vagrant"
         end
       end
+
+
       cfg.vm.provider :aws do |aws, override|
         override.vm.box = "dummy"
         override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
