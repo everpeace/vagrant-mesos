@@ -3,6 +3,7 @@
 # vagrant plugins required:
 # vagrant-berkshelf, vagrant-omnibus, vagrant-hosts
 require 'yaml'
+mesos_version = "0.18.2"
 
 Vagrant.configure("2") do |config|
 
@@ -83,7 +84,7 @@ Vagrant.configure("2") do |config|
     chef.json = {
       :mesos => {
         :type         => "mesosphere",
-        :version      => "0.18.0",
+        :version      => mesos_version,
         :mesosphere   => {
           :with_zookeeper => true
         },
@@ -101,14 +102,20 @@ Vagrant.configure("2") do |config|
     }
   end
 
+  if "#{mesos_version}" >= "0.17.0"
+    marathon_version="marathon-0.5.1"
+  else
+    marathon_version="marathon-0.5.1_mesos-0.16.0"
+  end
+  marathon_download_url="http://downloads.mesosphere.io/marathon/#{marathon_version}/#{marathon_version}.tgz"
   config.vm.provision :shell, :inline => <<SCRIPT
         apt-get -y install default-jre-headless unzip curl libcurl3
         if [ ! -e /tmp/marathon.tgz ]; then
-          curl -sSfL http://downloads.mesosphere.io/marathon/marathon-0.4.1.tgz --output /tmp/marathon.tgz
+          curl -sSfL #{marathon_download_url} --output /tmp/marathon.tgz
           mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
         fi
         kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        nohup /opt/marathon/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
+        nohup /opt/#{marathon_version}/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /opt/#{marathon_version}/nohup.log 2> /opt/#{marathon_version}/nohup.log < /dev/null &
 SCRIPT
 
 end

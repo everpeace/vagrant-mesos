@@ -238,14 +238,20 @@ SCRIPT
         }
       end
 
+      if "#{conf[:mesos_version]}" >= "0.17.0"
+        marathon_version="marathon-0.5.1"
+      else
+        marathon_version="marathon-0.5.1_mesos-0.16.0"
+      end
+      marathon_download_url="http://downloads.mesosphere.io/marathon/#{marathon_version}/#{marathon_version}.tgz"
       cfg.vm.provision :shell, :inline => <<SCRIPT
         apt-get -y install default-jre-headless unzip curl libcurl3
         if [ ! -e /tmp/marathon.tgz ]; then
-          curl -sSfL http://downloads.mesosphere.io/marathon/marathon-0.4.1.tgz --output /tmp/marathon.tgz
+          curl -sSfL #{marathon_download_url} --output /tmp/marathon.tgz
           mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
         fi
         kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        LIBPROCESS_IP=#{marathon_ip} nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} > /opt/marathon/nohup.log 2> /opt/marathon/nohup.log < /dev/null &
+        LIBPROCESS_IP=#{marathon_ip} nohup /opt/#{marathon_version}/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} > /opt/#{marathon_version}/nohup.log 2> /opt/#{marathon_version}/nohup.log < /dev/null &
 SCRIPT
     end
   end
