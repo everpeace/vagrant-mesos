@@ -12,8 +12,11 @@ Vagrant.configure("2") do |config|
   config.omnibus.chef_version = :latest
 
   # if you want to use vagrant-cachier,
-  # please activate below.
-  config.cache.auto_detect = true
+  # please install vagrant-cachier plugin.
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.enable :apt
+    config.cache.enable :chef
+  end
 
   config.vm.provider :virtualbox do |vb, override|
     override.vm.box = "Official Ubuntu 13.04 daily Cloud Image amd64 (No Guest Additions)"
