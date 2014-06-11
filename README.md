@@ -9,6 +9,9 @@ This also spins up [Marathon](https://github.com/mesosphere/marathon) server nod
 * Using Amazon EC2
 	* [Mesos Standalone on EC2](#sec2)
 	* [Mesos Cluster on EC2 (VPC)](#clec2)
+* Using VmWare Fusion
+	* [Mesos Standalone on EC2](#svb)
+
 
 The mesos installation is powered by mesos chef cookbook.  Please see [everpeace/cookbook-mesos](http://github.com/everpeace/cookbook-mesos).
 
@@ -16,6 +19,9 @@ Prerequisites
 ----
 * vagrant 1.2+: <http://www.vagrantup.com/>
 * VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
+* VMware Fusion: <http://www.vmware.com/products/fusion-professional> ($) (not required for ec2.)
+	* Vagrant VMware Provider: <https://www.vagrantup.com/vmware> ($)
+
 * vagrant plugins
     * [vagrant-omnibus](https://github.com/schisamo/vagrant-omnibus)
           `$ vagrant plugin install vagrant-omnibus`
@@ -32,7 +38,7 @@ Prerequisites
     	   `$ vagrant plugin install vagrant-aws`
 
 <a name="svb"></a>
-Mesos Standalone on VirtualBox
+Mesos Standalone on VirtualBox and VMware Fusion
 ----
 It's so simple!
 
