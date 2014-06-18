@@ -1,5 +1,5 @@
 # Mesos cluster configurations
-mesos_version: "0.18.2"
+mesos_version: "0.19.0"
 
 # The numbers of servers
 ##############################
@@ -13,7 +13,7 @@ zk_mem     : 256
 zk_cpus    : 1
 master_mem : 256
 master_cpus: 1
-slave_mem  : 512
+slave_mem  : 1024
 slave_cpus : 2
 
 # private ip bases

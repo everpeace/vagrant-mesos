@@ -97,6 +97,12 @@ SCRIPT
         end
       end
 
+      # mesos-master doesn't create its work_dir.
+      master_work_dir = "/var/run/mesos"
+      if master?(ninfo[:hostname]) then
+        cfg.vm.provision :shell, :inline => "mkdir -p #{master_work_dir}"
+      end
+
       cfg.vm.provision :chef_solo do |chef|
 #       chef.log_level = :debug
         chef.add_recipe "apt"
@@ -113,12 +119,16 @@ SCRIPT
               :master       => if ninfos[:zk].length > 0 then
                 {
                   :cluster => "MyCluster",
+                  :quorum => "#{(ninfos[:master].length.to_f/2).ceil}",
+                  :work_dir => master_work_dir,
                   :zk => "zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos",
                   :ip => "#{ninfo[:ip]}"
                 }
               else
                 {
                   :cluster => "MyCluster",
+                  :quorum => "#{(ninfos[:master].length.to_f/2).ceil}",
+                  :work_dir => master_work_dir,
                   :ip => "#{ninfo[:ip]}"
                 }
               end
