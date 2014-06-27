@@ -113,7 +113,7 @@ SCRIPT
           chef.json  = {
             :mesos=> {
               :type         => "mesosphere",
-              :version      => conf[:mesos_version],
+              :version      => conf["mesos_version"],
               :master_ips   => ninfos[:master].map { |m| "#{m[:ip]}" },
               :slave_ips    => ninfos[:slave].map { |s| "#{s[:ip]}" },
               :master       => if ninfos[:zk].length > 0 then
@@ -143,7 +143,7 @@ SCRIPT
           chef.json = {
             :mesos => {
               :type         => "mesosphere",
-              :version      => conf[:mesos_version],
+              :version      => conf["mesos_version"],
               :slave        => {
                 :master       => if ninfos[:zk].length > 0 then
                                    "zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(", ")+"/mesos"
@@ -159,7 +159,7 @@ SCRIPT
           chef.json = {
             :mesos => {
               :type         => "mesosphere",
-              :version      => conf[:mesos_version],
+              :version      => conf["mesos_version"],
               :mesosphere   => {
                 :with_zookeeper => true
               }
@@ -249,12 +249,12 @@ SCRIPT
         chef.json = {
           :mesos => {
             :type         => "mesosphere",
-            :version      => conf[:mesos_version]
+            :version      => conf["mesos_version"]
           }
         }
       end
 
-      if "#{conf[:mesos_version]}" >= "0.17.0"
+      if "#{conf["mesos_version"]}" >= "0.17.0"
         marathon_version="marathon-0.5.1"
       else
         marathon_version="marathon-0.5.1_mesos-0.16.0"
