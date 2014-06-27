@@ -254,12 +254,14 @@ SCRIPT
         }
       end
 
-      if "#{conf["mesos_version"]}" >= "0.17.0"
-        marathon_version="marathon-0.5.1"
+      if "#{conf["mesos_version"]}" >= "0.19.0"
+        marathon_version = "marathon-0.6.0"
+      elsif "#{conf["mesos_version"]}" >= "0.17.0"
+        marathon_version = "marathon-0.5.1"
       else
-        marathon_version="marathon-0.5.1_mesos-0.16.0"
+        marathon_version = "marathon-0.5.1_mesos-0.16.0"
       end
-      marathon_download_url="http://downloads.mesosphere.io/marathon/#{marathon_version}/#{marathon_version}.tgz"
+      marathon_download_url = "http://downloads.mesosphere.io/marathon/#{marathon_version}/#{marathon_version}.tgz"
       cfg.vm.provision :shell, :inline => <<SCRIPT
         apt-get -y install default-jre-headless unzip curl libcurl3
         if [ ! -e /tmp/marathon.tgz ]; then
