@@ -29,8 +29,8 @@ Vagrant.configure("2") do |config|
     config.vm.define ninfo[:hostname] do |cfg|
 
       cfg.vm.provider :virtualbox do |vb, override|
-        override.vm.box = "Official Ubuntu 14.04 daily Cloud Image amd64 (Development release,  No Guest Additions)"
-        override.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+        override.vm.box = "opscode-ubuntu-14.04"
+        override.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box"
 
         override.vm.hostname = ninfo[:hostname]
         override.vm.network :private_network, :ip => ninfo[:ip]
@@ -186,8 +186,8 @@ SCRIPT
     config.vm.define :marathon do |cfg|
       marathon_ip = conf["marathon_ipbase"]+"11"
       cfg.vm.provider :virtualbox do |vb, override|
-        override.vm.box = "Official Ubuntu 14.04 daily Cloud Image amd64 (Development release,  No Guest Additions)"
-        override.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+        override.vm.box = "opscode-ubuntu-14.04"
+        override.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box"
 
         override.vm.hostname = "marathon"
         override.vm.network :private_network, :ip => marathon_ip
