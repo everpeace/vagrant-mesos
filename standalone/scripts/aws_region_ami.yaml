@@ -1,10 +1,10 @@
 # this list comes from http://cloud-images.ubuntu.com/locator/ec2/
 # all amis are raring, amd64, ebs type instances.
-ap-northeast-1: ami-fb90f3fa
-ap-southeast-1: ami-52d98d00
-ap-southeast-2: ami-9f54cba5
-eu-west-1: ami-50d13827
-sa-east-1: ami-8d66c790
-us-east-1: ami-ef795786
-us-west-1: ami-3cf1c179
-us-west-2: ami-801773b0
+ap-northeast-1: ami-c786dcc6
+ap-southeast-1: ami-eefca7bc
+ap-southeast-2: ami-996706a3
+eu-west-1: ami-4ab46b3d
+sa-east-1: ami-6770d87a
+us-east-1: ami-d2ff23ba
+us-west-1: ami-73717d36
+us-west-2: ami-f1ce8bc1
