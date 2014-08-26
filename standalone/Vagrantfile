@@ -37,8 +37,10 @@ Vagrant.configure("2") do |config|
 
     # for mesos web UI.
     override.vm.network :forwarded_port, guest: 5050, host: 5050
-    # for Marathon Web UI
+    # for Marathon web UI
     override.vm.network :forwarded_port, guest: 8080, host: 8080
+    # for Chronos web UI
+    override.vm.network :forwarded_port, guest: 8081, host: 8081
 
     override.vm.provision :shell do |s|
       s.path = "scripts/populate_sshkey.sh"
@@ -115,13 +117,20 @@ Vagrant.configure("2") do |config|
   end
   marathon_download_url = "http://downloads.mesosphere.io/marathon/#{marathon_version}/#{marathon_version}.tgz"
   config.vm.provision :shell, :inline => <<SCRIPT
-        apt-get -y install default-jre-headless unzip curl libcurl3
-        if [ ! -e /tmp/marathon.tgz ]; then
-          curl -sSfL #{marathon_download_url} --output /tmp/marathon.tgz
-          mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
-        fi
-        kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        nohup /opt/#{marathon_version}/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /opt/#{marathon_version}/nohup.log 2> /opt/#{marathon_version}/nohup.log < /dev/null &
+    apt-get -y install default-jre-headless unzip curl libcurl3
+    if [ ! -e /tmp/marathon.tgz ]; then
+      curl -sSfL #{marathon_download_url} --output /tmp/marathon.tgz
+      mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
+    fi
+    kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
+    nohup /opt/#{marathon_version}/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /opt/#{marathon_version}/nohup.log 2> /opt/#{marathon_version}/nohup.log < /dev/null &
+
+    # Install and run Chronos based on:
+    # https://mesosphere.io/learn/run-chronos-on-mesos/
+    curl -sSfL http://downloads.mesosphere.io/chronos/chronos-2.1.0_mesos-0.14.0-rc4.tgz --output chronos.tgz
+    tar xzf chronos.tgz && cd chronos
+    nohup ./bin/start-chronos.bash --master zk://localhost:2181/mesos --zk_hosts zk://localhost:2181/mesos --http_port 8081 > /opt/#{marathon_version}/nohup_chronos.log 2> /opt/#{marathon_version}/nohup_chronos.log < /dev/null &
+
 SCRIPT
 
 end
