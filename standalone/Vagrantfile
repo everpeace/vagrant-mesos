@@ -77,11 +77,10 @@ Vagrant.configure("2") do |config|
     chef.add_recipe "apt"
     chef.add_recipe "mesos"
     chef.add_recipe "mesos::master"
-    chef.add_recipe "mesos::slave"
     chef.add_recipe "docker::aufs"
     chef.add_recipe "docker::lxc"
     chef.add_recipe "docker"
-    chef.add_recipe "mesos::docker-executor"
+    chef.add_recipe "mesos::slave"
 
     # You may also specify custom JSON attributes:
     chef.json = {
@@ -100,20 +99,28 @@ Vagrant.configure("2") do |config|
         },
         :slave =>{
           :master => "zk://localhost:2181/mesos",
-          :isolation => "process"
+          :containerizers => "docker,mesos",
+          :isolation => "cgroups/cpu,cgroups/mem",
+          :executor_registration_timeout => "5mins",
         }
       }
     }
   end
 
+  # please also refer https://mesosphere.github.io/marathon/docs/
   if "#{mesos_version}" >= "0.20.0"
-    marathon_version = "marathon-0.6.1"
+    marathon_download_url = "http://downloads.mesosphere.io/marathon/v0.7.0-RC2/marathon-0.7.0-RC2.tgz"
+    marathon_version="0.7.0-RC2"
+  elsif "#{mesos_version}" >= "0.19.0"
+    marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.6.1/marathon-0.6.1.tgz"
+    marathon_version="0.6.1"
   elsif "#{mesos_version}" >= "0.17.0"
-    marathon_version = "marathon-0.5.1"
+    marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.5.1/marathon-0.5.1.tgz"
+    marathon_version="0.5.1"
   else
-    marathon_version = "marathon-0.5.1_mesos-0.16.0"
+    marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.5.1_mesos-0.16.0/marathon-0.5.1_mesos-0.16.0.tgz"
+    marathon_version="0.5.1_mesos-0.16.0"
   end
-  marathon_download_url = "http://downloads.mesosphere.io/marathon/#{marathon_version}/#{marathon_version}.tgz"
   config.vm.provision :shell, :inline => <<SCRIPT
         apt-get -y install default-jre-headless unzip curl libcurl3
         if [ ! -e /tmp/marathon.tgz ]; then
@@ -121,7 +128,7 @@ Vagrant.configure("2") do |config|
           mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
         fi
         kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        nohup /opt/#{marathon_version}/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /opt/#{marathon_version}/nohup.log 2> /opt/#{marathon_version}/nohup.log < /dev/null &
+        nohup /opt/marathon-#{marathon_version}/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /opt/marathon-#{marathon_version}/nohup.log 2> /opt/marathon-#{marathon_version}/nohup.log < /dev/null &
 SCRIPT
 
 end

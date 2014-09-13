@@ -1,7 +1,9 @@
 # vagrant-mesos
 Spin up your [Mesos](http://mesos.apache.org) Cluster with [Vagrant](http://www.vagrantup.com)! (Both Virtualbox and AWS are supported.)
 
-This also spins up [Marathon](https://github.com/mesosphere/marathon) server node and installs [mesos-docker](http://mesosphere.io/2013/09/26/docker-on-mesos/) executor to `/var/lib/mesos/executors/docker` of each mesos slave node. This means you can build your own private PaaS with `vagrant up`!!
+This also spins up [Marathon](https://github.com/mesosphere/marathon) (0.7.0-RC2) server node. This means you can build your own Mesos+Marathon+Docker PaaS with `vagrant up`!!
+
+_If you wanted to deploy docker containers in Mesos+Marathon, please refer to [thig blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
 
 * Using VirtualBox
 	* [Mesos Standalone on VirtualBox](#svb)
