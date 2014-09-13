@@ -1,5 +1,5 @@
 # Mesos cluster configurations
-mesos_version: "0.19.1"
+mesos_version: "0.20.0"
 
 # The numbers of servers
 ##############################
@@ -29,6 +29,8 @@ marathon_enable: true
 marathon_mem   : 512
 marathon_cpus  : 1
 marathon_ipbase: "172.31.3."
+
+chronos_enable: true
 
 # EC2 Configurations
 # please choose one region from

@@ -1,7 +1,9 @@
 # vagrant-mesos
 Spin up your [Mesos](http://mesos.apache.org) Cluster with [Vagrant](http://www.vagrantup.com)! (Both Virtualbox and AWS are supported.)
 
-This also spins up [Marathon](https://github.com/mesosphere/marathon) server node and installs [mesos-docker](http://mesosphere.io/2013/09/26/docker-on-mesos/) executor to `/var/lib/mesos/executors/docker` of each mesos slave node. This means you can build your own private PaaS with `vagrant up`!!
+This also spins up [Marathon](https://github.com/mesosphere/marathon) (0.7.0-RC2) server node. This means you can build your own Mesos+Marathon+Docker PaaS with `vagrant up`!!
+
+_If you wanted to deploy docker containers, please refer to the chapter "Deploy Docker Container with Marathon" in [thig blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
 
 * Using VirtualBox
 	* [Mesos Standalone on VirtualBox](#svb)
@@ -14,7 +16,7 @@ The mesos installation is powered by mesos chef cookbook.  Please see [everpeace
 
 Prerequisites
 ----
-* vagrant 1.2+: <http://www.vagrantup.com/>
+* vagrant 1.5.2+: <http://www.vagrantup.com/>
 * VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
 * vagrant plugins
     * [vagrant-omnibus](https://github.com/schisamo/vagrant-omnibus)
@@ -22,8 +24,7 @@ Prerequisites
     * [vagrant-berkshelf](https://github.com/berkshelf/vagrant-berkshelf)
           `$ vagrant plugin install vagrant-berkshelf`
 
-		* if you use vagrant 1.5.2+, please install vagrant-berkshelf 2.0.1+
-		    `$ vagrant plugin install vagrant-berkshelf --plugin-version '>= 2.0.1'`
+		* To use vagrant-berkself, you will have to install [ChefDK](http://getchef.com/downloads/chef-dk).
     * [vagrant-hosts](https://github.com/adrienthebo/vagrant-hosts)
           `$ vagrant plugin install vagrant-hosts`
     * [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)
@@ -39,12 +40,11 @@ It's so simple!
     $ cd standalone
     $ vagrant up
 
-After box is up, you can see
+After box is up, you can see services running at:
 
-* mesos web UI on: <http://192.168.33.10:5050>
-* [marathon](https://github.com/mesosphere/marathon) web UI on: <http://192.168.33.10:8080>
-
-if everything went well.
+* Mesos web UI on: <http://192.168.33.10:5050>
+* [Marathon](https://github.com/mesosphere/marathon) web UI on: <http://192.168.33.10:8080>
+* Chronos web UI on: <http://192.168.33.10:8081>
 
 <a name="sec2"></a>
 Mesos Standalone on EC2
@@ -76,12 +76,12 @@ Mesos Standalone on EC2
         cd standalone
         vagrant up --provider=aws
 
-   After box is up, you can see
+   After box is up, you can see services running at:
 
    * mesos web UI on: `http://#_public_dns_of_the_VM_#:5050`
    * [marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_the_VM_#:8080`
+   * Chronos web UI on: `http://#_public_dns_of_the_VM_#:8081`
 
-   if everything went well.
 
 	_Tips: you can get public dns of the vm by:_
 
@@ -132,12 +132,11 @@ $ cd multinodes
 $ ./vagrant up
 ```
 
-At default setting, after all the boxes are up, you can see
+At default setting, after all the boxes are up, you can see services running at:
 
-* mesos web UI on: <http://172.31.1.11:5050>
-* [marathon](https://github.com/mesosphere/marathon) web UI on: <http://172.31.3.11:8080>
-
-if everything went well.
+* Mesos web UI on: <http://172.31.1.11:5050>
+* [Marathon](https://github.com/mesosphere/marathon) web UI on: <http://172.31.3.11:8080>
+* Chronos web UI on: <http://172.31.1.11:8081>
 
 #### Destroy Cluster
 this operations all VM instances forming the cluster.
@@ -200,6 +199,7 @@ After instances are all up, you can see
 
 * mesos web UI on: `http://#_public_dns_of_the_master_N_#:5050`
 * [marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_marathon_#:8080`
+* Chronos web UI on: `http://#_public_dns_of_chronos#:8081`
 
 if everything went well.
 

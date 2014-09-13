@@ -139,7 +139,6 @@ SCRIPT
           chef.add_recipe "docker::lxc"
           chef.add_recipe "docker"
           chef.add_recipe "mesos::slave"
-          chef.add_recipe "mesos::docker-executor"
           chef.json = {
             :mesos => {
               :type         => "mesosphere",
@@ -151,7 +150,9 @@ SCRIPT
                                    "#{ninfos[:master][0][:ip]}:5050"
                                  end,
                 :ip           => "#{ninfo[:ip]}",
-                :isolation    => "process"
+                :containerizers => "docker,mesos",
+                :isolation => "cgroups/cpu,cgroups/mem",
+                :executor_registration_timeout => "5mins",
               }
             }
           }
@@ -254,23 +255,47 @@ SCRIPT
         }
       end
 
-      if "#{conf["mesos_version"]}" >= "0.19.0"
-        marathon_version = "marathon-0.6.0"
+      # please also refer https://mesosphere.github.io/marathon/docs/
+      if "#{conf["mesos_version"]}" >= "0.20.0"
+        marathon_download_url = "http://downloads.mesosphere.io/marathon/v0.7.0-RC2/marathon-0.7.0-RC2.tgz"
+        marathon_version = "0.7.0-RC2"
+      elsif "#{conf["mesos_version"]}" >= "0.19.0"
+        marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.6.1/marathon-0.6.1.tgz"
+        marathon_version = "0.6.1"
       elsif "#{conf["mesos_version"]}" >= "0.17.0"
-        marathon_version = "marathon-0.5.1"
+        marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.5.1/marathon-0.5.1.tgz"
+        marathon_version = "0.5.1"
       else
-        marathon_version = "marathon-0.5.1_mesos-0.16.0"
+        marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.5.1_mesos-0.16.0/marathon-0.5.1_mesos-0.16.0.tgz"
+        marathon_version = "0.5.1_mesos-0.16.0"
       end
-      marathon_download_url = "http://downloads.mesosphere.io/marathon/#{marathon_version}/#{marathon_version}.tgz"
-      cfg.vm.provision :shell, :inline => <<SCRIPT
+      cfg.vm.provision :shell, :privileged => true, :inline => <<SCRIPT
         apt-get -y install default-jre-headless unzip curl libcurl3
         if [ ! -e /tmp/marathon.tgz ]; then
           curl -sSfL #{marathon_download_url} --output /tmp/marathon.tgz
           mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
         fi
+
+        mkdir -p /var/log/marathon
         kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        LIBPROCESS_IP=#{marathon_ip} nohup /opt/#{marathon_version}/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} > /opt/#{marathon_version}/nohup.log 2> /opt/#{marathon_version}/nohup.log < /dev/null &
+        LIBPROCESS_IP=#{marathon_ip} nohup /opt/marathon-#{marathon_version}/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
 SCRIPT
+
+      # TODO: move to its own section
+      if conf["chronos_enable"] then
+        cfg.vm.provision :shell, :privileged => true, :inline => <<SCRIPT
+          if [ ! -e /tmp/chronos.tgz ]; then
+            curl -sSfL http://downloads.mesosphere.io/chronos/chronos-2.1.0_mesos-0.14.0-rc4.tgz --output /tmp/chronos.tgz
+            mkdir -p /opt && cd /opt && tar xzf /tmp/chronos.tgz
+          fi
+
+          # Install and run Chronos based on:
+          # https://mesosphere.io/learn/run-chronos-on-mesos/
+          mkdir -p /var/log/chronos
+          nohup /opt/chronos/bin/start-chronos.bash --master zk://localhost:2181/mesos --zk_hosts #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --http_port 8081 > /var/log/chronos/nohup.log 2> /var/log/chronos/nohup.log < /dev/null &
+SCRIPT
+      end
+
     end
   end
 end
