@@ -254,8 +254,8 @@ SCRIPT
         }
       end
 
-      if "#{conf["mesos_version"]}" >= "0.19.0"
-        marathon_version = "marathon-0.6.0"
+      if "#{conf["mesos_version"]}" >= "0.20.0"
+        marathon_version = "marathon-0.6.1"
       elsif "#{conf["mesos_version"]}" >= "0.17.0"
         marathon_version = "marathon-0.5.1"
       else
