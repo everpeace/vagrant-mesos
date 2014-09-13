@@ -3,7 +3,7 @@ Spin up your [Mesos](http://mesos.apache.org) Cluster with [Vagrant](http://www.
 
 This also spins up [Marathon](https://github.com/mesosphere/marathon) (0.7.0-RC2) server node. This means you can build your own Mesos+Marathon+Docker PaaS with `vagrant up`!!
 
-_If you wanted to deploy docker containers in Mesos+Marathon, please refer to [thig blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
+_If you wanted to deploy docker containers, please refer to the chapter "Deploy Docker Container with Marathon" in [thig blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
 
 * Using VirtualBox
 	* [Mesos Standalone on VirtualBox](#svb)
