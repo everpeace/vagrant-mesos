@@ -14,7 +14,7 @@ The mesos installation is powered by mesos chef cookbook.  Please see [everpeace
 
 Prerequisites
 ----
-* vagrant 1.2+: <http://www.vagrantup.com/>
+* vagrant 1.5.2+: <http://www.vagrantup.com/>
 * VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
 * vagrant plugins
     * [vagrant-omnibus](https://github.com/schisamo/vagrant-omnibus)
@@ -22,8 +22,7 @@ Prerequisites
     * [vagrant-berkshelf](https://github.com/berkshelf/vagrant-berkshelf)
           `$ vagrant plugin install vagrant-berkshelf`
 
-		* if you use vagrant 1.5.2+, please install vagrant-berkshelf 2.0.1+
-		    `$ vagrant plugin install vagrant-berkshelf --plugin-version '>= 2.0.1'`
+		* To use vagrant-berkself, you will have to install [ChefDK](http://getchef.com/downloads/chef-dk).
     * [vagrant-hosts](https://github.com/adrienthebo/vagrant-hosts)
           `$ vagrant plugin install vagrant-hosts`
     * [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)
