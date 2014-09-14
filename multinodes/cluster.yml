@@ -30,6 +30,8 @@ marathon_mem   : 512
 marathon_cpus  : 1
 marathon_ipbase: "172.31.3."
 
+chronos_enable: true
+
 # EC2 Configurations
 # please choose one region from
 # ["ap-northeast-1", "ap-southeast-1", "eu-west-1", "sa-east-1",

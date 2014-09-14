@@ -37,8 +37,10 @@ Vagrant.configure("2") do |config|
 
     # for mesos web UI.
     override.vm.network :forwarded_port, guest: 5050, host: 5050
-    # for Marathon Web UI
+    # for Marathon web UI
     override.vm.network :forwarded_port, guest: 8080, host: 8080
+    # for Chronos web UI
+    override.vm.network :forwarded_port, guest: 8081, host: 8081
 
     override.vm.provision :shell do |s|
       s.path = "scripts/populate_sshkey.sh"
@@ -121,14 +123,27 @@ Vagrant.configure("2") do |config|
     marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.5.1_mesos-0.16.0/marathon-0.5.1_mesos-0.16.0.tgz"
     marathon_version="0.5.1_mesos-0.16.0"
   end
-  config.vm.provision :shell, :inline => <<SCRIPT
-        apt-get -y install default-jre-headless unzip curl libcurl3
-        if [ ! -e /tmp/marathon.tgz ]; then
-          curl -sSfL #{marathon_download_url} --output /tmp/marathon.tgz
-          mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
-        fi
-        kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        nohup /opt/marathon-#{marathon_version}/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /opt/marathon-#{marathon_version}/nohup.log 2> /opt/marathon-#{marathon_version}/nohup.log < /dev/null &
+
+  # TODO: find a cookbook that take care of marathon and chronos installation
+  config.vm.provision :shell, :privileged => true, :inline => <<SCRIPT
+    apt-get -y install default-jre-headless unzip curl libcurl3
+    if [ ! -e /tmp/marathon.tgz ]; then
+      curl -sSfL #{marathon_download_url} --output /tmp/marathon.tgz
+      mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
+    fi
+    mkdir -p /var/log/marathon
+    kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
+    nohup /opt/marathon-#{marathon_version}/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
+
+    if [ ! -e /tmp/chronos.tgz ]; then
+      curl -sSfL http://downloads.mesosphere.io/chronos/chronos-2.1.0_mesos-0.14.0-rc4.tgz --output /tmp/chronos.tgz
+      mkdir -p /opt && cd /opt && tar xzf /tmp/chronos.tgz
+    fi
+
+    # Install and run Chronos based on:
+    # https://mesosphere.io/learn/run-chronos-on-mesos/
+    mkdir -p /var/log/chronos
+    nohup /opt/chronos/bin/start-chronos.bash --master zk://localhost:2181/mesos --zk_hosts zk://localhost:2181/mesos --http_port 8081 > /var/log/chronos/nohup.log 2> /var/log/chronos/nohup.log < /dev/null &
 SCRIPT
 
 end

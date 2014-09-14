@@ -40,12 +40,11 @@ It's so simple!
     $ cd standalone
     $ vagrant up
 
-After box is up, you can see
+After box is up, you can see services running at:
 
-* mesos web UI on: <http://192.168.33.10:5050>
-* [marathon](https://github.com/mesosphere/marathon) web UI on: <http://192.168.33.10:8080>
-
-if everything went well.
+* Mesos web UI on: <http://192.168.33.10:5050>
+* [Marathon](https://github.com/mesosphere/marathon) web UI on: <http://192.168.33.10:8080>
+* Chronos web UI on: <http://192.168.33.10:8081>
 
 <a name="sec2"></a>
 Mesos Standalone on EC2
@@ -77,12 +76,12 @@ Mesos Standalone on EC2
         cd standalone
         vagrant up --provider=aws
 
-   After box is up, you can see
+   After box is up, you can see services running at:
 
    * mesos web UI on: `http://#_public_dns_of_the_VM_#:5050`
    * [marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_the_VM_#:8080`
+   * Chronos web UI on: `http://#_public_dns_of_the_VM_#:8081`
 
-   if everything went well.
 
 	_Tips: you can get public dns of the vm by:_
 
@@ -133,12 +132,11 @@ $ cd multinodes
 $ ./vagrant up
 ```
 
-At default setting, after all the boxes are up, you can see
+At default setting, after all the boxes are up, you can see services running at:
 
-* mesos web UI on: <http://172.31.1.11:5050>
-* [marathon](https://github.com/mesosphere/marathon) web UI on: <http://172.31.3.11:8080>
-
-if everything went well.
+* Mesos web UI on: <http://172.31.1.11:5050>
+* [Marathon](https://github.com/mesosphere/marathon) web UI on: <http://172.31.3.11:8080>
+* Chronos web UI on: <http://172.31.1.11:8081>
 
 #### Destroy Cluster
 this operations all VM instances forming the cluster.
@@ -201,6 +199,7 @@ After instances are all up, you can see
 
 * mesos web UI on: `http://#_public_dns_of_the_master_N_#:5050`
 * [marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_marathon_#:8080`
+* Chronos web UI on: `http://#_public_dns_of_chronos#:8081`
 
 if everything went well.
 
