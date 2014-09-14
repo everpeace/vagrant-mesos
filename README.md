@@ -1,9 +1,7 @@
 # vagrant-mesos
 Spin up your [Mesos](http://mesos.apache.org) Cluster with [Vagrant](http://www.vagrantup.com)! (Both Virtualbox and AWS are supported.)
 
-This also spins up [Marathon](https://github.com/mesosphere/marathon) (0.7.0-RC2) server node. This means you can build your own Mesos+Marathon+Docker PaaS with `vagrant up`!!
-
-_If you wanted to deploy docker containers, please refer to the chapter "Deploy Docker Container with Marathon" in [thig blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
+This also spins up a framework server node in which [Marathon](https://github.com/mesosphere/marathon) (0.7.0-RC2) and [Chronos](http://github.com/mesosphere/chronos) (2.1.0) are runinng.  This means you can build your own __Mesos+Marathon+Chronos+Docker__ PaaS with `vagrant up`!!  Marathon works as distributed `init.d` and Chronos works as distributed `cron`!!  _If you wanted to deploy docker containers, please refer to the chapter "Deploy Docker Container with Marathon" in [thig blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
 
 * Using VirtualBox
 	* [Mesos Standalone on VirtualBox](#svb)
@@ -23,7 +21,6 @@ Prerequisites
           `$ vagrant plugin install vagrant-omnibus`
     * [vagrant-berkshelf](https://github.com/berkshelf/vagrant-berkshelf)
           `$ vagrant plugin install vagrant-berkshelf`
-
 		* To use vagrant-berkself, you will have to install [ChefDK](http://getchef.com/downloads/chef-dk).
     * [vagrant-hosts](https://github.com/adrienthebo/vagrant-hosts)
           `$ vagrant plugin install vagrant-hosts`
@@ -44,7 +41,7 @@ After box is up, you can see services running at:
 
 * Mesos web UI on: <http://192.168.33.10:5050>
 * [Marathon](https://github.com/mesosphere/marathon) web UI on: <http://192.168.33.10:8080>
-* Chronos web UI on: <http://192.168.33.10:8081>
+* [Chronos](https://github.com/mesosphere/chronos) web UI on: <http://192.168.33.10:8081>
 
 <a name="sec2"></a>
 Mesos Standalone on EC2
@@ -78,9 +75,9 @@ Mesos Standalone on EC2
 
    After box is up, you can see services running at:
 
-   * mesos web UI on: `http://#_public_dns_of_the_VM_#:5050`
-   * [marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_the_VM_#:8080`
-   * Chronos web UI on: `http://#_public_dns_of_the_VM_#:8081`
+   * Mesos web UI on: `http://#_public_dns_of_the_VM_#:5050`
+   * [Marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_the_VM_#:8080`
+   * [Chronos](https://github.com/mesosphere/chronos) web UI on: `http://#_public_dns_of_the_VM_#:8081`
 
 
 	_Tips: you can get public dns of the vm by:_
@@ -98,7 +95,7 @@ Cluster configuration is defined at `multinodes/cluster.yml`.  You can edit the 
 
 ```
 # Mesos cluster configurations
-mesos_version: 0.15.0
+mesos_version: 0.20.0
 
 # The numbers of servers
 ##############################
@@ -136,7 +133,7 @@ At default setting, after all the boxes are up, you can see services running at:
 
 * Mesos web UI on: <http://172.31.1.11:5050>
 * [Marathon](https://github.com/mesosphere/marathon) web UI on: <http://172.31.3.11:8080>
-* Chronos web UI on: <http://172.31.1.11:8081>
+* [Chronos](https://github.com/mesosphere/chronos) web UI on: <http://172.31.3.11:8081>
 
 #### Destroy Cluster
 this operations all VM instances forming the cluster.
