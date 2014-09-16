@@ -8,8 +8,6 @@ secret_access_key: EDIT_HERE
 region: us-east-1
 
 # set a custom AMI to use if you need something other than the defaults
-# If you set this, you will have to comment out config.vm.box
-# and activate override.vm.box and override.vm.box_url in Vagrnatfile.
 #custom_ami: EDIT_HERE
 
 # array of security groups. e.g. ['sg*** ']
