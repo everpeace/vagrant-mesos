@@ -7,7 +7,6 @@ mesos_version = "0.20.0"
 
 Vagrant.configure("2") do |config|
   # https://vagrantcloud.com/everpeace/boxes/mesos
-  # If you set custom_ami in aws_config.yaml, please comment out this.
   config.vm.box = "everpeace/mesos"
 
   # enable plugins
@@ -49,11 +48,13 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  conf = YAML.load_file('aws_config.yaml')
   config.vm.provider :aws do |aws, override|
-    # If you set custom_ami in aws_config.yaml, please activate this.
-    # override.vm.box = "dummy"
-    # override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+    conf = YAML.load_file('aws_config.yaml')
+
+    if conf["custom_ami"] then
+      override.vm.box = "dummy"
+      override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+    end
 
     aws.access_key_id = conf["access_key_id"]
     aws.secret_access_key = conf["secret_access_key"]

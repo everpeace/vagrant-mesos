@@ -11,9 +11,10 @@ ninfos = gen_node_infos(conf)
 ## vagrant plugins required:
 # vagrant-aws, vagrant-berkshelf, vagrant-omnibus, vagrant-hosts, vagrant-cachier
 Vagrant.configure("2") do |config|
-  # https://vagrantcloud.com/everpeace/boxes/mesos
-  # If you set custom_ami in aws_config.yaml, please comment out this.
-  config.vm.box = "everpeace/mesos"
+  if !conf["custom_ami"] then
+    # https://vagrantcloud.com/everpeace/boxes/mesos
+    config.vm.box = "everpeace/mesos"
+  end
 
   # enable plugins
   config.berkshelf.enabled = true
@@ -50,15 +51,13 @@ Vagrant.configure("2") do |config|
       end
 
       cfg.vm.provider :aws do |aws, override|
-        # If you set custom_ami in aws_config.yaml, please activate this.
-        # override.vm.box = "dummy"
-        # override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
-
         aws.access_key_id = conf["access_key_id"]
         aws.secret_access_key = conf["secret_access_key"]
 
         aws.region = conf["region"]
         if conf["custom_ami"] then
+            override.vm.box = "dummy"
+            override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
             aws.ami = conf["custom_ami"]
         end
         aws.instance_type = ninfo[:instance_type]
@@ -193,16 +192,14 @@ SCRIPT
         end
       end
       cfg.vm.provider :aws do |aws, override|
-        # If you set custom_ami in aws_config.yaml, please activate this.
-        # override.vm.box = "dummy"
-        # override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
-
         aws.access_key_id = conf["access_key_id"]
         aws.secret_access_key = conf["secret_access_key"]
 
         aws.region = conf["region"]
         if conf["custom_ami"] then
-            aws.ami = conf["custom_ami"]
+          override.vm.box = "dummy"
+          override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+          aws.ami = conf["custom_ami"]
         end
         aws.instance_type = conf["marathon_instance_type"]
         aws.keypair_name = conf["keypair_name"]
