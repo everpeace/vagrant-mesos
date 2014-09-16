@@ -12,6 +12,8 @@ This also spins up a framework server node in which [Marathon](https://github.co
 
 The mesos installation is powered by mesos chef cookbook.  Please see [everpeace/cookbook-mesos](http://github.com/everpeace/cookbook-mesos).
 
+Base boxes used in `Vagrantfile`s are Mesos pre-installed boxes, [everpeace/mesos](https://vagrantcloud.com/everpeace/boxes/mesos) shared on Vagrant Cloud.
+
 Prerequisites
 ----
 * vagrant 1.5.2+: <http://www.vagrantup.com/>
