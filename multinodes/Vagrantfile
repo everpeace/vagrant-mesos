@@ -292,7 +292,7 @@ SCRIPT
           # Install and run Chronos based on:
           # https://mesosphere.io/learn/run-chronos-on-mesos/
           mkdir -p /var/log/chronos
-          nohup /opt/chronos/bin/start-chronos.bash --master zk://localhost:2181/mesos --zk_hosts #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --http_port 8081 > /var/log/chronos/nohup.log 2> /var/log/chronos/nohup.log < /dev/null &
+          nohup /opt/chronos/bin/start-chronos.bash --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --http_port 8081 > /var/log/chronos/nohup.log 2> /var/log/chronos/nohup.log < /dev/null &
 SCRIPT
       end
 
