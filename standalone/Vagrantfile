@@ -6,6 +6,8 @@ require 'yaml'
 mesos_version = "0.20.0"
 
 Vagrant.configure("2") do |config|
+  # https://vagrantcloud.com/everpeace/boxes/mesos
+  config.vm.box = "everpeace/mesos"
 
   # enable plugins
   config.berkshelf.enabled = true
@@ -19,8 +21,6 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provider :virtualbox do |vb, override|
-    override.vm.box = "opscode-ubuntu-14.04"
-    override.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_ubuntu-14.04_chef-provisionerless.box"
     vb.name = 'vagrant-mesos-standalone'
 
     # Use VBoxManage to customize the VM. For example to change memory:
@@ -48,17 +48,12 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  ami = YAML.load_file('scripts/aws_region_ami.yaml')
   conf = YAML.load_file('aws_config.yaml')
   config.vm.provider :aws do |aws, override|
-    override.vm.box = "dummy"
-    override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
-
     aws.access_key_id = conf["access_key_id"]
     aws.secret_access_key = conf["secret_access_key"]
 
     aws.region = conf["region"]
-    aws.ami = ami[conf["region"]]
     aws.instance_type = conf["instance_type"]
     aws.keypair_name = conf["keypair_name"]
     aws.security_groups = conf["security_groups"]
@@ -77,11 +72,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :chef_solo do |chef|
     # chef.log_level = :debug
     chef.add_recipe "apt"
-    chef.add_recipe "mesos"
     chef.add_recipe "mesos::master"
-    chef.add_recipe "docker::aufs"
-    chef.add_recipe "docker::lxc"
-    chef.add_recipe "docker"
     chef.add_recipe "mesos::slave"
 
     # You may also specify custom JSON attributes:
@@ -89,9 +80,6 @@ Vagrant.configure("2") do |config|
       :mesos => {
         :type         => "mesosphere",
         :version      => mesos_version,
-        :mesosphere   => {
-          :with_zookeeper => true
-        },
         :master_ips => ["localhost"],
         :slave_ips  => ["localhost"],
         :master => {
@@ -109,36 +97,10 @@ Vagrant.configure("2") do |config|
     }
   end
 
-  # please also refer https://mesosphere.github.io/marathon/docs/
-  if "#{mesos_version}" >= "0.20.0"
-    marathon_download_url = "http://downloads.mesosphere.io/marathon/v0.7.0-RC2/marathon-0.7.0-RC2.tgz"
-    marathon_version="0.7.0-RC2"
-  elsif "#{mesos_version}" >= "0.19.0"
-    marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.6.1/marathon-0.6.1.tgz"
-    marathon_version="0.6.1"
-  elsif "#{mesos_version}" >= "0.17.0"
-    marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.5.1/marathon-0.5.1.tgz"
-    marathon_version="0.5.1"
-  else
-    marathon_download_url = "http://downloads.mesosphere.io/marathon/marathon-0.5.1_mesos-0.16.0/marathon-0.5.1_mesos-0.16.0.tgz"
-    marathon_version="0.5.1_mesos-0.16.0"
-  end
-
-  # TODO: find a cookbook that take care of marathon and chronos installation
   config.vm.provision :shell, :privileged => true, :inline => <<SCRIPT
-    apt-get -y install default-jre-headless unzip curl libcurl3
-    if [ ! -e /tmp/marathon.tgz ]; then
-      curl -sSfL #{marathon_download_url} --output /tmp/marathon.tgz
-      mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
-    fi
     mkdir -p /var/log/marathon
     kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-    nohup /opt/marathon-#{marathon_version}/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
-
-    if [ ! -e /tmp/chronos.tgz ]; then
-      curl -sSfL http://downloads.mesosphere.io/chronos/chronos-2.1.0_mesos-0.14.0-rc4.tgz --output /tmp/chronos.tgz
-      mkdir -p /opt && cd /opt && tar xzf /tmp/chronos.tgz
-    fi
+    nohup /opt/marathon-0.7.0-RC2/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
 
     # Install and run Chronos based on:
     # https://mesosphere.io/learn/run-chronos-on-mesos/
