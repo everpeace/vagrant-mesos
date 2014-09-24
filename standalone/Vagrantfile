@@ -109,7 +109,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, :privileged => true, :inline => <<SCRIPT
     mkdir -p /var/log/marathon
     kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-    nohup /opt/marathon-0.7.0-RC2/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
+    nohup /opt/marathon-0.7.0-RC3/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
 
     # Install and run Chronos based on:
     # https://mesosphere.io/learn/run-chronos-on-mesos/
