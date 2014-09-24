@@ -232,7 +232,7 @@ SCRIPT
       cfg.vm.provision :shell, :privileged => true, :inline => <<SCRIPT
         mkdir -p /var/log/marathon
         kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        LIBPROCESS_IP=#{marathon_ip} nohup /opt/marathon-0.7.0-RC4/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
+        LIBPROCESS_IP=#{marathon_ip} nohup /opt/marathon-0.7.0/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
 SCRIPT
 
       if conf["chronos_enable"] then
