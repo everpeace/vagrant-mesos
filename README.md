@@ -151,7 +151,7 @@ Mesos Cluster on EC2 (VPC)
 ----
 Because we assign private IP addreses to VM instances, this Vagrantfile requires Amazon VPC (you'll have to set subnet_id and security grooups both of which associates to the same VPC instance).
 
-_Note: Using default VPC is highly recommended.  If you used non-default vpc, you should make sure that limit of the elastic ips is no less than (zk&#95;n + master&#95;n + slave&#95;n).  The limit default is 5._
+_Note: Using default VPC is highly recommended.  If you used non-default VPC, you should make sure to activate "DNS resolution" and "DNS hostname" feature in the VPC._
 
 ### Cluster Configuration
 You have to configure some additional stuffs in `multinodes/cluster.yml` which are related to EC2.  Please note that
