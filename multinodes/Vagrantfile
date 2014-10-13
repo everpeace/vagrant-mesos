@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
         aws.tags = {
           Name: "vagrant-mesos-#{ninfo[:hostname]}"
         }
-        if !conf[:default_vpc] then
+        if !conf["default_vpc"] then
           aws.associate_public_ip = true
         end
 
@@ -209,7 +209,7 @@ SCRIPT
         aws.tags = {
           Name: "vagrant-mesos-marathon"
         }
-        if !conf[:default_vpc] then
+        if !conf["default_vpc"] then
           aws.associate_public_ip = true
         end
 
