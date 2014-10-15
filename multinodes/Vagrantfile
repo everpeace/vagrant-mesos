@@ -167,6 +167,16 @@ SCRIPT
           sudo restart zookeeper
 SCRIPT
       end
+
+      # If you wanted use `.dockercfg` file
+      # Please place the file simply on this directory
+      if File.exist?(".dockercfg")
+        config.vm.provision :shell, :priviledged => true, :inline <<SCRIPT
+          cp /vagrant/.dockercfg /root/.dockercfg
+          chmod 600 /root/.dockercfg
+          chown root /root/.dockercfg
+        SCRIPT
+      end
     end
   end
 
@@ -244,6 +254,15 @@ SCRIPT
 SCRIPT
       end
 
+      # If you wanted use `.dockercfg` file
+      # Please place the file simply on this directory
+      if File.exist?(".dockercfg")
+        config.vm.provision :shell, :priviledged => true, :inline <<SCRIPT
+          cp /vagrant/.dockercfg /root/.dockercfg
+          chmod 600 /root/.dockercfg
+          chown root /root/.dockercfg
+        SCRIPT
+      end
     end
   end
 end
