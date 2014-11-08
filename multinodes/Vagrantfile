@@ -158,20 +158,20 @@ SCRIPT
 
       if zk?(ninfo[:hostname]) then
         myid = (/zk([0-9]+)/.match ninfo[:hostname])[1]
-        cfg.vm.provision :shell, :inline => <<SCRIPT
+        cfg.vm.provision :shell, :inline => <<-SCRIPT
           sudo mkdir -p /tmp/zookeeper
           sudo chmod 755 /tmp/zookeeper
           sudo chown zookeeper /tmp/zookeeper
           sudo -u zookeeper echo #{myid} > /tmp/zookeeper/myid
           sudo -u zookeeper /opt/chef/embedded/bin/ruby /vagrant/scripts/gen_zoo_conf.rb > /etc/zookeeper/conf/zoo.cfg
           sudo restart zookeeper
-SCRIPT
+        SCRIPT
       end
 
       # If you wanted use `.dockercfg` file
       # Please place the file simply on this directory
       if File.exist?(".dockercfg")
-        config.vm.provision :shell, :priviledged => true, :inline <<SCRIPT
+        config.vm.provision :shell, :priviledged => true, :inline => <<-SCRIPT
           cp /vagrant/.dockercfg /root/.dockercfg
           chmod 600 /root/.dockercfg
           chown root /root/.dockercfg
