@@ -106,7 +106,7 @@ Vagrant.configure("2") do |config|
     }
   end
 
-  config.vm.provision :shell, :privileged => true, :inline => <<SCRIPT
+  config.vm.provision :shell, :privileged => true, :inline => <<-SCRIPT
     mkdir -p /var/log/marathon
     kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
     nohup /opt/marathon/bin/start --master zk://localhost:2181/mesos --zk_hosts localhost:2181 > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
@@ -115,15 +115,15 @@ Vagrant.configure("2") do |config|
     # https://mesosphere.io/learn/run-chronos-on-mesos/
     mkdir -p /var/log/chronos
     nohup /opt/chronos/bin/start-chronos.bash --master zk://localhost:2181/mesos --zk_hosts zk://localhost:2181/mesos --http_port 8081 > /var/log/chronos/nohup.log 2> /var/log/chronos/nohup.log < /dev/null &
-SCRIPT
+    SCRIPT
 
   # If you wanted use `.dockercfg` file
   # Please place the file simply on this directory
   if File.exist?(".dockercfg")
-    config.vm.provision :shell, :priviledged => true, :inline => <<SCRIPT
+    config.vm.provision :shell, :priviledged => true, :inline => <<-SCRIPT
       cp /vagrant/.dockercfg /root/.dockercfg
       chmod 600 /root/.dockercfg
       chown root /root/.dockercfg
-SCRIPT
+      SCRIPT
   end
 end
