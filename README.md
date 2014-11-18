@@ -17,12 +17,12 @@ Base boxes used in `Vagrantfile`s are Mesos pre-installed boxes, [everpeace/meso
 
 Prerequisites
 ----
-* vagrant 1.5.2+: <http://www.vagrantup.com/>
+* vagrant 1.6.5+: <http://www.vagrantup.com/>
 * VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
 * vagrant plugins
     * [vagrant-omnibus](https://github.com/schisamo/vagrant-omnibus)
           `$ vagrant plugin install vagrant-omnibus`
-    * [vagrant-berkshelf](https://github.com/berkshelf/vagrant-berkshelf)
+    * [vagrant-berkshelf](https://github.com/berkshelf/vagrant-berkshelf) (>=4.0.0)
           `$ vagrant plugin install vagrant-berkshelf`
 		* To use vagrant-berkself, you will have to install [ChefDK](http://getchef.com/downloads/chef-dk).
     * [vagrant-hosts](https://github.com/adrienthebo/vagrant-hosts)
