@@ -94,7 +94,7 @@ Mesos Standalone on EC2
 Mesos Cluster on VirtualBox
 ----
 ### Cluster Configuration
-Cluster configuration is defined at `multinodes/cluster.yml`.  You can edit the file to congigure cluster settings.
+Cluster configuration is defined at `multinodes/cluster.yml`.  You can edit the file to configure cluster settings.
 
 ```
 # Mesos cluster configurations
