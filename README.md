@@ -24,7 +24,7 @@ Prerequisites
           `$ vagrant plugin install vagrant-omnibus`
     * [vagrant-berkshelf](https://github.com/berkshelf/vagrant-berkshelf) (>=4.0.0)
           `$ vagrant plugin install vagrant-berkshelf`
-		* To use vagrant-berkself, you will have to install [ChefDK](http://getchef.com/downloads/chef-dk).
+		* To use vagrant-berkself, you will have to install [ChefDK](https://downloads.chef.io/chef-dk/).
     * [vagrant-hosts](https://github.com/adrienthebo/vagrant-hosts)
           `$ vagrant plugin install vagrant-hosts`
     * [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)
