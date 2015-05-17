@@ -37,7 +37,8 @@ Mesos Standalone on VirtualBox
 ----
 It's so simple!
 
-    $ cd standalone
+    $ git clone https://github.com/everpeace/vagrant-mesos.git
+    $ cd vagrant-mesos/standalone
     $ vagrant up
 
 After box is up, you can see services running at:
