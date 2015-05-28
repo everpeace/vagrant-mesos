@@ -130,7 +130,7 @@ This takes several minutes(10 to 20 min.).  It's time to go grabbing some coffee
 
 ```
 $ cd multinodes
-$ ./vagrant up
+$ vagrant up
 ```
 
 At default setting, after all the boxes are up, you can see services running at:

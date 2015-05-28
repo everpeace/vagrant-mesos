@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
     config.cache.enable :chef
   end
 
-  # define VMs. all VMs has identical configuration.
+  # define VMs. all VMs have identical configuration.
   [ninfos[:zk], ninfos[:master], ninfos[:slave]].flatten.each_with_index do |ninfo, i|
     config.vm.define ninfo[:hostname] do |cfg|
 
