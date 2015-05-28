@@ -144,7 +144,7 @@ this operations all VM instances forming the cluster.
 
 ```
 $ cd multinodes
-$ ./vagrant destroy
+$ vagrant destroy
 ```
 
 <a name="clec2"></a>
