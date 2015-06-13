@@ -2,7 +2,7 @@
 
 Spin up your [Mesos](http://mesos.apache.org) cluster with [Vagrant](http://www.vagrantup.com)! (Both Virtualbox and AWS are supported.)
 
-This spins up Mesos 0.21.0 cluster and also spins up a framework server node in which [Marathon](https://github.com/mesosphere/marathon) (0.8.0) and [Chronos](http://github.com/mesos/chronos) (2.1.0) are running.  This means you can build your own __Mesos+Marathon+Chronos+Docker__ PaaS with `vagrant up`!!  Marathon works as distributed `init.d` and Chronos works as distributed `cron`!!  _If you wanted to deploy docker containers, please refer to the chapter "Deploy Docker Container with Marathon" in [this blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
+This spins up Mesos 0.22.1 cluster and also spins up a framework server node in which [Marathon](https://github.com/mesosphere/marathon) (0.8.2) and [Chronos](http://github.com/mesos/chronos) (2.1.0) are running.  This means you can build your own __Mesos+Marathon+Chronos+Docker__ PaaS with `vagrant up`!!  Marathon works as distributed `init.d` and Chronos works as distributed `cron`!!  _If you wanted to deploy docker containers, please refer to the chapter "Deploy Docker Container with Marathon" in [this blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
 
 * Using VirtualBox
 	* [Mesos Standalone on VirtualBox](#svb)
@@ -99,7 +99,7 @@ Cluster configuration is defined at `multinodes/cluster.yml`.  You can edit the 
 
 ```
 # Mesos cluster configurations
-mesos_version: 0.20.0
+mesos_version: 0.22.1
 
 # The numbers of servers
 ##############################

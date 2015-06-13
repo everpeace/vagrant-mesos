@@ -1,5 +1,5 @@
 # Mesos cluster configurations
-mesos_version: "0.21.0"
+mesos_version: "0.22.1"
 
 # The numbers of servers
 ##############################
