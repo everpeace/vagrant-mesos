@@ -57,6 +57,9 @@ Vagrant.configure("2") do |config|
       override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
     end
 
+    # workaround for https://github.com/mitchellh/vagrant-aws/issues/275
+    aws.ami=""
+
     aws.access_key_id = conf["access_key_id"]
     aws.secret_access_key = conf["secret_access_key"]
 

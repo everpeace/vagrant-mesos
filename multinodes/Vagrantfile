@@ -61,6 +61,10 @@ Vagrant.configure("2") do |config|
             override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
             aws.ami = conf["custom_ami"]
         end
+
+        # workaround for https://github.com/mitchellh/vagrant-aws/issues/275
+        aws.ami=""
+
         aws.instance_type = ninfo[:instance_type]
         aws.keypair_name = conf["keypair_name"]
         aws.subnet_id = conf["subnet_id"]
@@ -212,6 +216,10 @@ Vagrant.configure("2") do |config|
           override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
           aws.ami = conf["custom_ami"]
         end
+
+        # workaround for https://github.com/mitchellh/vagrant-aws/issues/275
+        aws.ami=""
+
         aws.instance_type = conf["marathon_instance_type"]
         aws.keypair_name = conf["keypair_name"]
         aws.subnet_id = conf["subnet_id"]
