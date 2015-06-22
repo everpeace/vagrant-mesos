@@ -10,13 +10,14 @@ region: us-east-1
 # set a custom AMI to use if you need something other than the defaults
 #custom_ami: EDIT_HERE
 
-# array of security groups. e.g. ['sg*** ']
+# array of security groups names. e.g. ['quick-start-1']
 # please make sure to open ports 22(SSH), 5050(Mesos), 8080(Marathon)
 security_groups: EDIT_HERE
 
 # see http://aws.amazon.com/ec2/instance-types/#selecting-instance-types
-# for other instance types and its specs.
-instance_type: m1.small
+# for other instance types and its specs. As aws-vagrant plugin doesn't 
+# handle virtualization type, use non-VPC instance.
+instance_type: m3.medium
 
 keypair_name: EDIT_HERE
 
