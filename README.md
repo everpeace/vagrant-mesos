@@ -27,7 +27,7 @@ Prerequisites
 		* To use vagrant-berkself, you will have to install [ChefDK](https://downloads.chef.io/chef-dk/).
     * [vagrant-hosts](https://github.com/adrienthebo/vagrant-hosts)
           `$ vagrant plugin install vagrant-hosts`
-    * [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)
+    * [vagrant-cachier](https://github.com/fgrehm/vagrant-cachier)(optional)
           `$ vagrant plugin install vagrant-cachier`
     * [vagrant-aws](https://github.com/mitchellh/vagrant-aws) (only if you use ec2.)
     	   `$ vagrant plugin install vagrant-aws`
