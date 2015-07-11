@@ -1,3 +1,5 @@
 .vagrant
 Berksfile.lock
 generated
+.idea
+standalone/berks-cookbooks
