@@ -97,6 +97,14 @@ Vagrant.configure("2") do |config|
           s.args = "/home/ubuntu ubuntu"
         end
 
+        override.vm.provision :shell do |s|
+          s.path = "scripts/cleanup.sh"
+        end
+
+        override.vm.provision :shell do |s|
+          s.path = "scripts/rexray.sh"
+        end
+
         if master?(ninfo[:hostname]) || slave?(ninfo[:hostname]) then
           override.vm.provision :shell , :inline => <<-SCRIPT
             PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
@@ -261,9 +269,12 @@ Vagrant.configure("2") do |config|
       end
 
       cfg.vm.provision :shell, :privileged => true, :inline => <<-SCRIPT
+        curl -sSfL http://downloads.mesosphere.io/marathon/v0.10.0/marathon-0.10.0.tgz --output /tmp/marathon.tgz
+        mkdir -p /opt && cd /opt && tar xzf /tmp/marathon.tgz
+        mv marathon-0.10.0 marathon
         mkdir -p /var/log/marathon
         kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        LIBPROCESS_IP=#{marathon_ip} nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} --event_subscriber http_callback > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
+        LIBPROCESS_IP=#{marathon_ip} nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --event_subscriber http_callback > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
         SCRIPT
 
       if conf["chronos_enable"] then
