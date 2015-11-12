@@ -12,4 +12,3 @@ host *
     StrictHostKeyChecking no
 EOT
 chown $USER $HOME/.ssh/config
-
