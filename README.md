@@ -6,7 +6,7 @@ Spin up your [Mesos](http://mesos.apache.org) cluster with [Vagrant](http://www.
 
 This spins up Mesos 0.23.0 cluster and also spins up a framework server node in which [Marathon](https://github.com/mesosphere/marathon) (0.11.1) and [Chronos](http://github.com/mesos/chronos) (2.1.0) are running.  This means you can build your own __Mesos+Marathon+Chronos+Docker__ PaaS with `vagrant up --provider=aws`!  Marathon works as distributed `init.d` and Chronos works as distributed `cron`!
 
-To deploy *Docker* containers, refer to the [Marathon documentation](https://mesosphere.github.io/marathon/docs/native-docker.html) and look at the [examples](examples) included in this repo.
+To deploy *Docker* containers, refer to the [Marathon documentation](https://mesosphere.github.io/marathon/docs/native-docker.html) and look at the [examples](multinodes/examples) included in this repo.
 
 * Using Amazon EC2
 	* [Mesos Standalone on EC2](#mesos-standalone-on-ec2)
