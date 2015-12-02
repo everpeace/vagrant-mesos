@@ -1,0 +1,22 @@
+{
+    "id": "postgresql",
+    "container": {
+      "docker": {
+        "image": "postgres",
+        "network": "BRIDGE",
+        "portMappings": [
+          { "containerPort": 5432, "hostPort": 0, "protocol": "tcp"}
+        ],
+        "parameters": [
+            { "key": "volume-driver", "value": "rexray" },
+            { "key": "volume", "value": "pg-data:/var/lib/postgresql/data" },
+            { "key": "env", "value": "PGDATA=/var/lib/postgresql/data/pg-data" },
+            { "key": "env", "value": "POSTGRES_PASSWORD=password" }
+        ]
+      }
+    },
+    "args": ["postgres"],
+    "cpus": 0.2,
+    "mem": 32.0,
+    "instances": 1
+}

@@ -1,0 +1,12 @@
+{
+  "libraries": [
+    {
+      "file": "/usr/lib/libmesos_dvdi_isolator-0.23.0.so",
+      "modules": [
+        {
+          "name": "com_emccode_mesos_DockerVolumeDriverIsolator"
+        }
+      ]
+    }
+  ]
+}

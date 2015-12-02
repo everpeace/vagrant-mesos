@@ -1,0 +1,12 @@
+{
+  "id": "hello-play",
+  "cmd": "while [ true ] ; do touch /var/lib/rexray/volumes/test12345/hello ; sleep 5 ; done",
+  "mem": 32,
+  "cpus": 0.1,
+  "instances": 1,
+  "env": {
+    "DVDI_VOLUME_NAME": "test12345",
+    "DVDI_VOLUME_DRIVER": "rexray",
+    "DVDI_VOLUME_OPTS": "size=5,iops=150,volumetype=io1,newfstype=xfs,overwritefs=true"
+  }
+}

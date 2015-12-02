@@ -1,0 +1,12 @@
+{
+  "id": "mesos-volume",
+  "cmd": "while [ true ] ; do touch /var/lib/rexray/volumes/mesos-volume/hello ; sleep 5 ; done",
+  "mem": 32,
+  "cpus": 0.1,
+  "instances": 1,
+  "env": {
+    "DVDI_VOLUME_NAME": "mesos-volume",
+    "DVDI_VOLUME_DRIVER": "rexray",
+    "DVDI_VOLUME_OPTS": "size=50,iops=1500,volumetype=io1,newfstype=xfs,overwritefs=true"
+  }
+}

@@ -1,0 +1,20 @@
+{
+    "id": "redis",
+    "container": {
+      "docker": {
+        "image": "redis",
+        "network": "BRIDGE",
+        "portMappings": [
+          { "containerPort": 6379, "hostPort": 0, "protocol": "tcp"}
+        ],
+        "parameters": [
+            { "key": "volume-driver", "value": "rexray" },
+            { "key": "volume", "value": "redis-data:/data" }
+        ]
+      }
+    },
+    "args": ["redis-server", "--appendonly", "yes"],
+    "cpus": 0.2,
+    "mem": 32.0,
+    "instances": 1
+}

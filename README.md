@@ -1,15 +1,16 @@
-# vagrant-mesos [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/everpeace/vagrant-mesos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# vagrant-mesos [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/jonasrosland/vagrant-mesos?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Spin up your [Mesos](http://mesos.apache.org) cluster with [Vagrant](http://www.vagrantup.com)! (Both Virtualbox and AWS are supported.)
+This is a fork of [everpeace/vagrant-mesos](https://github.com/everpeace/vagrant-mesos), adding updated versions of Mesos and Marathon, and also adding new functionality with [REX-Ray](https://github.com/emccode/rexray) and [DVDI](https://github.com/emccode/mesos-module-dvdi).
 
-This spins up Mesos 0.22.1 cluster and also spins up a framework server node in which [Marathon](https://github.com/mesosphere/marathon) (0.8.2) and [Chronos](http://github.com/mesos/chronos) (2.1.0) are running.  This means you can build your own __Mesos+Marathon+Chronos+Docker__ PaaS with `vagrant up`!!  Marathon works as distributed `init.d` and Chronos works as distributed `cron`!!  _If you wanted to deploy docker containers, please refer to the chapter "Deploy Docker Container with Marathon" in [this blog entry](http://frankhinek.com/deploy-docker-containers-on-mesos-0-20/)._
+Spin up your [Mesos](http://mesos.apache.org) cluster with [Vagrant](http://www.vagrantup.com)! (Only AWS is supported currently.)
 
-* Using VirtualBox
-	* [Mesos Standalone on VirtualBox](#svb)
-	* [Mesos Cluster on VirtualBox](#clvb)
+This spins up Mesos 0.23.0 cluster and also spins up a framework server node in which [Marathon](https://github.com/mesosphere/marathon) (0.11.1) and [Chronos](http://github.com/mesos/chronos) (2.1.0) are running.  This means you can build your own __Mesos+Marathon+Chronos+Docker__ PaaS with `vagrant up --provider=aws`!  Marathon works as distributed `init.d` and Chronos works as distributed `cron`!
+
+To deploy *Docker* containers, refer to the [Marathon documentation](https://mesosphere.github.io/marathon/docs/native-docker.html) and look at the [examples](multinodes/examples) included in this repo.
+
 * Using Amazon EC2
-	* [Mesos Standalone on EC2](#sec2)
-	* [Mesos Cluster on EC2 (VPC)](#clec2)
+	* [Mesos Standalone on EC2](#mesos-standalone-on-ec2)
+	* [Mesos Cluster on EC2 (VPC)](#mesos-cluster-on-ec2)
 
 The mesos installation is powered by Mesos chef cookbook.  Please see [everpeace/cookbook-mesos](http://github.com/everpeace/cookbook-mesos).
 
@@ -18,7 +19,6 @@ Base boxes used in `Vagrantfile`s are Mesos pre-installed boxes, [everpeace/meso
 Prerequisites
 ----
 * vagrant 1.6.5+: <http://www.vagrantup.com/>
-* VirtualBox: <https://www.virtualbox.org/> (not required if you use ec2.)
 * vagrant plugins
     * [vagrant-omnibus](https://github.com/schisamo/vagrant-omnibus)
           `$ vagrant plugin install vagrant-omnibus`
@@ -32,24 +32,8 @@ Prerequisites
     * [vagrant-aws](https://github.com/mitchellh/vagrant-aws) (only if you use ec2.)
     	   `$ vagrant plugin install vagrant-aws`
 
-<a name="svb"></a>
-Mesos Standalone on VirtualBox
-----
-It's so simple!
+## Mesos Standalone on EC2
 
-    $ git clone https://github.com/everpeace/vagrant-mesos.git
-    $ cd vagrant-mesos/standalone
-    $ vagrant up
-
-After box is up, you can see services running at:
-
-* Mesos web UI on: <http://192.168.33.10:5050>
-* [Marathon](https://github.com/mesosphere/marathon) web UI on: <http://192.168.33.10:8080>
-* [Chronos](https://github.com/mesos/chronos) web UI on: <http://192.168.33.10:8081>
-
-<a name="sec2"></a>
-Mesos Standalone on EC2
-----
 1. Set ec2 credentials and some configurations defined in `standalone/aws_config.yml`. You have to fill up `EDIT_HERE` parts.  Security group you'll set must accept at least tcp port 22(SSH) and 5050(mesos-master web ui) from outside of ec2.
 
 		# Please set AWS credentials
@@ -72,12 +56,12 @@ Mesos Standalone on EC2
 
 		ssh_private_key_path: EDIT_HERE
 
-2. You can spin up mesos box on ec2 by the same way with the case of virtual box
+2. You can now spin up the Mesos box on ec2 with the following commands:
 
         cd standalone
         vagrant up --provider=aws
 
-   After box is up, you can see services running at:
+   After Vagrant has done it's thing, you can see the services running at:
 
    * Mesos web UI on: `http://#_public_dns_of_the_VM_#:5050`
    * [Marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_the_VM_#:8080`
@@ -91,15 +75,15 @@ Mesos Standalone on EC2
 	http://ec2-54-193-24-154.us-west-1.compute.amazonaws.com:5050
 	```
 
-<a name="clvb"></a>
-Mesos Cluster on VirtualBox
-----
+
+## Mesos Cluster on EC2
+
 ### Cluster Configuration
-Cluster configuration is defined at `multinodes/cluster.yml`.  You can edit the file to configure cluster settings.
+Cluster configuration is defined at `multinodes/cluster.yml`.  You need to edit the file to configure cluster settings and also add in you AWS credentials as outlined in the next section.
 
 ```
 # Mesos cluster configurations
-mesos_version: 0.22.1
+mesos_version: 0.23.0
 
 # The numbers of servers
 ##############################
@@ -125,36 +109,10 @@ master_ipbase: "172.31.1."
 slave_ipbase : "172.31.2."
 ```
 
-### Launch Cluster
-This takes several minutes(10 to 20 min.).  It's time to go grabbing some coffee.
-
-```
-$ cd multinodes
-$ vagrant up
-```
-
-At default setting, after all the boxes are up, you can see services running at:
-
-* Mesos web UI on: <http://172.31.1.11:5050>
-* [Marathon](https://github.com/mesosphere/marathon) web UI on: <http://172.31.3.11:8080>
-* [Chronos](https://github.com/mesos/chronos) web UI on: <http://172.31.3.11:8081>
-
-#### Destroy Cluster
-this operations all VM instances forming the cluster.
-
-```
-$ cd multinodes
-$ vagrant destroy
-```
-
-<a name="clec2"></a>
-Mesos Cluster on EC2 (VPC)
-----
 Because we assign private IP addreses to VM instances, this Vagrantfile requires Amazon VPC (you'll have to set subnet_id and security grooups both of which associates to the same VPC instance).
 
 _Note: Using default VPC is highly recommended.  If you used non-default VPC, you should make sure to activate "DNS resolution" and "DNS hostname" feature in the VPC._
 
-### Cluster Configuration
 You have to configure some additional stuffs in `multinodes/cluster.yml` which are related to EC2.  Please note that
 
 * `subnet_id` should be a VPC subnet
@@ -186,23 +144,23 @@ master_instance_type: m1.small
 slave_instance_type: m1.small
 ```
 
+
 ### Launch Cluster
-After editing configuration is done, you can just hit regular command.
+This takes several minutes (10 to 30 min.).  Go grab some coffee :)
 
 ```
-$ cd multinode
+$ cd multinodes
 $ vagrant up --provider=aws --no-parallel
 ```
 
 _NOTE: `--no-parallel` is highly recommended because vagrant-berkshelf plugin is prone to failure in parallel provisioning._
 
-After instances are all up, you can see
+After instances are all up, if everything went well you can now connect to the
 
-* mesos web UI on: `http://#_public_dns_of_the_master_N_#:5050`
-* [marathon](https://github.com/mesosphere/marathon) web UI on: `http://#_public_dns_of_marathon_#:8080`
+* Mesos web UI on: `http://#_public_dns_of_the_master_N_#:5050`
+* Marathon web UI on: `http://#_public_dns_of_marathon_#:8080`
 * Chronos web UI on: `http://#_public_dns_of_chronos#:8081`
 
-if everything went well.
 
 _Tips: you can get public dns of the vms by:_
 
