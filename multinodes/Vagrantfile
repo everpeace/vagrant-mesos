@@ -129,6 +129,10 @@ Vagrant.configure("2") do |config|
           chef.add_recipe "mesos::master"
           chef.json  = {
             :mesos=> {
+
+              :mesosphere => {
+                build_version: conf["mesos_build_version"]
+              },
               :type         => "mesosphere",
               :version      => conf["mesos_version"],
               :master_ips   => ninfos[:master].map { |m| "#{m[:ip]}" },
@@ -155,6 +159,9 @@ Vagrant.configure("2") do |config|
           chef.add_recipe "mesos::slave"
           chef.json = {
             :mesos => {
+                :mesosphere => {
+                    build_version: conf["mesos_build_version"]
+                },
               :type         => "mesosphere",
               :version      => conf["mesos_version"],
               :slave        => {
