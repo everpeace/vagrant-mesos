@@ -25,12 +25,8 @@ zk_ipbase    : "172.31.0."
 master_ipbase: "172.31.1."
 slave_ipbase : "172.31.2."
 
-# experimental frameworks
+#marathon will be installed on masters
 marathon_enable: true
-marathon_mem   : 512
-marathon_cpus  : 1
-marathon_ipbase: "172.31.3."
-
 chronos_enable: true
 
 # EC2 Configurations

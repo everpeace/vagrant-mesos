@@ -121,11 +121,17 @@ Vagrant.configure("2") do |config|
         cfg.vm.provision :shell, :inline => "mkdir -p #{master_work_dir}"
       end
 
+
+
       cfg.vm.provision :chef_solo do |chef|
 #       chef.log_level = :debug
         chef.add_recipe "apt"
 
         if master?(ninfo[:hostname]) then
+
+          #install marathon on masters
+          cfg.vm.provision "shell", path: "install-marathon.sh"
+
           chef.add_recipe "mesos::master"
           chef.json  = {
             :mesos=> {
@@ -204,93 +210,5 @@ Vagrant.configure("2") do |config|
     end
   end
 
-  if conf["marathon_enable"] then
-    config.vm.define :marathon do |cfg|
-      marathon_ip = conf["marathon_ipbase"]+"11"
-      cfg.vm.provider :virtualbox do |vb, override|
-        override.vm.hostname = "marathon"
-        override.vm.network :private_network, :ip => marathon_ip
-        override.vm.provision :hosts
 
-        vb.name = 'vagrant-mesos-' + "marathon"
-        vb.customize ["modifyvm", :id, "--memory", conf["marathon_mem"], "--cpus", conf["marathon_cpus"] ]
-
-        override.vm.provision :shell do |s|
-          s.path = "scripts/populate_sshkey.sh"
-          s.args = "/root root"
-        end
-
-        override.vm.provision :shell do |s|
-          s.path = "scripts/populate_sshkey.sh"
-          s.args = "/home/vagrant vagrant"
-        end
-      end
-      cfg.vm.provider :aws do |aws, override|
-        aws.access_key_id = conf["access_key_id"]
-        aws.secret_access_key = conf["secret_access_key"]
-
-        aws.region = conf["region"]
-        if conf["custom_ami"] then
-          override.vm.box = "dummy"
-          override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
-          aws.ami = conf["custom_ami"]
-        end
-
-        # workaround for https://github.com/mitchellh/vagrant-aws/issues/275
-        aws.ami=""
-
-        aws.instance_type = conf["marathon_instance_type"]
-        aws.keypair_name = conf["keypair_name"]
-        aws.subnet_id = conf["subnet_id"]
-        aws.security_groups = conf["security_groups"]
-        aws.private_ip_address = marathon_ip
-        aws.tags = {
-          Name: "vagrant-mesos-marathon"
-        }
-        if !conf["default_vpc"] then
-          aws.associate_public_ip = true
-        end
-
-        override.ssh.username = "ubuntu"
-        override.ssh.private_key_path = conf["ssh_private_key_path"]
-
-        override.vm.provision :shell do |s|
-          s.path = "scripts/populate_sshkey.sh"
-          s.args = "/home/ubuntu ubuntu"
-        end
-
-        override.vm.provision :shell , :inline => <<-SCRIPT
-          PUBLIC_DNS=`wget -q -O - http://169.254.169.254/latest/meta-data/public-hostname`
-          hostname $PUBLIC_DNS
-          echo $PUBLIC_DNS > /etc/hostname
-          HOSTNAME=$PUBLIC_DNS  # Fix the bash built-in hostname variable too
-          SCRIPT
-      end
-
-      cfg.vm.provision :shell, :privileged => true, :inline => <<-SCRIPT
-        mkdir -p /var/log/marathon
-        kill -KILL `ps augwx | grep marathon | tr -s " " | cut -d' ' -f2`
-        LIBPROCESS_IP=#{marathon_ip} nohup /opt/marathon/bin/start --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")} --event_subscriber http_callback > /var/log/marathon/nohup.log 2> /var/log/marathon/nohup.log < /dev/null &
-        SCRIPT
-
-      if conf["chronos_enable"] then
-        cfg.vm.provision :shell, :privileged => true, :inline => <<-SCRIPT
-          # Install and run Chronos based on:
-          # https://mesosphere.io/learn/run-chronos-on-mesos/
-          mkdir -p /var/log/chronos
-          LIBPROCESS_IP=#{marathon_ip} nohup /opt/chronos/bin/start-chronos.bash --master #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --zk_hosts #{"zk://"+ninfos[:zk].map{|zk| zk[:ip]+":2181"}.join(",")+"/mesos"} --http_port 8081 > /var/log/chronos/nohup.log 2> /var/log/chronos/nohup.log < /dev/null &
-          SCRIPT
-      end
-
-      # If you wanted use `.dockercfg` file
-      # Please place the file simply on this directory
-      if File.exist?(".dockercfg")
-        config.vm.provision :shell, :priviledged => true, :inline => <<-SCRIPT
-          cp /vagrant/.dockercfg /root/.dockercfg
-          chmod 600 /root/.dockercfg
-          chown root /root/.dockercfg
-          SCRIPT
-      end
-    end
-  end
 end
