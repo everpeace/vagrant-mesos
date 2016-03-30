@@ -192,7 +192,8 @@ Vagrant.configure("2") do |config|
       172.31.1.12 master2
       172.31.2.11 slave1
       172.31.2.12 slave2
-      172.31.2.13 slave3""" | sudo tee -a /etc/hosts
+      172.31.2.13 slave3
+      172.31.2.14 slave4""" | sudo tee -a /etc/hosts
       SCRIPT
 
       if zk?(ninfo[:hostname]) then
