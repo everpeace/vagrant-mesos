@@ -161,10 +161,7 @@ Vagrant.configure("2") do |config|
               end
             }
           }
-          cfg.vm.provision :shell, :inline => <<-SCRIPT
-          ln -s /lib/init/upstart-job /etc/init.d/mesos-master
-          service mesos-master restart
-          SCRIPT
+
         elsif slave?(ninfo[:hostname]) then
           chef.add_recipe "mesos::slave"
 
@@ -185,14 +182,11 @@ Vagrant.configure("2") do |config|
                 :containerizers => "docker,mesos",
                 :isolation => "cgroups/cpu,cgroups/mem",
                 :executor_registration_timeout => "5mins",
-                :resources => "ports:[31000-32000,4040-4040,5432-5433,6000-7001,7080,7081,7199-7199,8012,8983,9042-9042,9160-9160,27000-29000]",
+                :resources => "ports:[31000-32000,4040-4040,5432-5433,6000-7001,7080,7081,7199-7199,8012,8983,9042-9042,9160-9160,27000-29000,61621-61621]",
               }
             }
           }
-          cfg.vm.provision :shell, :inline => <<-SCRIPT
-          ln -s /lib/init/upstart-job /etc/init.d/mesos-slave
-          service mesos-slave restart
-          SCRIPT
+
         end
       end
 
