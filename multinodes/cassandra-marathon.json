@@ -47,7 +47,7 @@
     "minimumHealthCapacity": 1,
     "maximumOverCapacity": 1
   },
-  "labels": {},
+  "labels": {}
 
 
 }
