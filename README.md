@@ -87,7 +87,7 @@ Mesos Standalone on EC2
 	_Tips: you can get public dns of the vm by:_
 
 	```
-	$ vagrant ssh -- 'echo http://`curl --silent http://169.254.169.254/latest/meta-data/public-hostname`:5050'
+	$ vagrant ssh -- 'echo http://`ec2metadata --public-hostname`:5050'
 	http://ec2-54-193-24-154.us-west-1.compute.amazonaws.com:5050
 	```
 
