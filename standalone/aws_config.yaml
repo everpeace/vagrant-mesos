@@ -21,3 +21,6 @@ instance_type: m1.small
 keypair_name: EDIT_HERE
 
 ssh_private_key_path: EDIT_HERE
+
+mesos_version: "0.28.0"
+mesos_build_version: "-2.0.16.ubuntu1404"
