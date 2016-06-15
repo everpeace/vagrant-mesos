@@ -1,0 +1,76 @@
+{
+    "id": "/infrastructure/cassandra",
+    "env": {
+      "SEEDS": "172.31.2.11, 172.31.2.12, 172.31.2.13"
+    },
+    "instances": 3,
+    "cpus": 1,
+    "mem": 128,
+    "disk": 0,
+    "executor": "",
+    "constraints": [
+      [
+        "hostname",
+        "UNIQUE"
+      ]
+    ],
+    "uris": [],
+    "fetch": [],
+    "storeUrls": [],
+    "ports": [
+      7199,
+      7000,
+      9160,
+      9042
+    ],
+    "requirePorts": false,
+    "backoffSeconds": 1,
+    "backoffFactor": 1.15,
+    "maxLaunchDelaySeconds": 3600,
+    "container": {
+      "type": "DOCKER",
+      "volumes": [],
+      "docker": {
+        "image": "elubow/cassandra:latest",
+        "network": "BRIDGE",
+        "portMappings": [
+          {
+            "containerPort": 7199,
+            "hostPort": 7199,
+            "servicePort": 7199,
+            "protocol": "tcp"
+          },
+          {
+            "containerPort": 7000,
+            "hostPort": 7000,
+            "servicePort": 7000,
+            "protocol": "tcp"
+          },
+          {
+            "containerPort": 9160,
+            "hostPort": 9160,
+            "servicePort": 9160,
+            "protocol": "tcp"
+          },
+          {
+            "containerPort": 9042,
+            "hostPort": 9042,
+            "servicePort": 9042,
+            "protocol": "tcp"
+          }
+        ],
+        "privileged": false,
+        "parameters": [],
+        "forcePullImage": false
+      }
+    },
+    "healthChecks": [],
+    "dependencies": [],
+    "upgradeStrategy": {
+      "minimumHealthCapacity": 1,
+      "maximumOverCapacity": 1
+    },
+    "labels": {}
+
+
+  }

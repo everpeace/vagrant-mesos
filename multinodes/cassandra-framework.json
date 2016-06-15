@@ -1,0 +1,46 @@
+{
+  "healthChecks": [
+    {
+      "timeoutSeconds": 5,
+      "protocol": "HTTP",
+      "portIndex": 0,
+      "path": "/health/cluster",
+      "maxConsecutiveFailures": 0,
+      "intervalSeconds": 30,
+      "gracePeriodSeconds": 120
+    },
+    {
+      "timeoutSeconds": 5,
+      "protocol": "HTTP",
+      "portIndex": 0,
+      "path": "/health/process",
+      "maxConsecutiveFailures": 3,
+      "intervalSeconds": 30,
+      "gracePeriodSeconds": 120
+    }
+  ],
+  "id": "/cassandra/dev",
+  "instances": 1,
+  "cpus": 0.5,
+  "mem": 384,
+  "ports": [
+    0
+  ],
+  "uris": [
+    "https://downloads.mesosphere.io/cassandra-mesos/artifacts/0.2.1-SNAPSHOT-608-master-d1c2cf30c8/cassandra-mesos-0.2.1-SNAPSHOT-608-master-d1c2cf30c8.tar.gz",
+    "https://downloads.mesosphere.io/java/jre-7u76-linux-x64.tar.gz"
+  ],
+  "env": {
+    "CASSANDRA_ZK_TIMEOUT_MS": "10000",
+    "CASSANDRA_HEALTH_CHECK_INTERVAL_SECONDS": "60",
+    "MESOS_ZK": "zk://172.31.0.11:2181/mesos",
+    "JAVA_OPTS": "-Xms256m -Xmx256m",
+    "CASSANDRA_CLUSTER_NAME": "dev",
+    "CASSANDRA_ZK": "zk://172.31.0.11:2181/cassandra-mesos1",
+    "CASSANDRA_NODE_COUNT": "3",
+    "CASSANDRA_RESOURCE_CPU_CORES": "1",
+    "CASSANDRA_RESOURCE_MEM_MB": "1024",
+    "CASSANDRA_RESOURCE_DISK_MB": "2048"
+  },
+  "cmd": "$(pwd)/jre*/bin/java $JAVA_OPTS -classpath cassandra-mesos-framework.jar io.mesosphere.mesos.frameworks.cassandra.framework.Main"
+}
